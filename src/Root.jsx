@@ -52,7 +52,7 @@ function TelaAutenticacao() {
   const estiloInput = (focado) => ({
     width: "100%",
     boxSizing: "border-box",
-    fontSize: "14.5px",
+    fontSize: "16px",
     padding: "12px 14px",
     borderRadius: "10px",
     border: `1.5px solid ${focado ? COR.sauge : COR.linha}`,
@@ -146,7 +146,11 @@ function TelaAutenticacao() {
     <div
       style={{
         fontFamily: SERIF,
-        background: `radial-gradient(circle at 50% 0%, #FBF7EC 0%, ${COR.fundo} 60%)`,
+        background: `
+          radial-gradient(ellipse 70% 45% at 18% -8%, rgba(224, 158, 148, 0.30) 0%, rgba(224, 158, 148, 0) 60%),
+          radial-gradient(ellipse 65% 50% at 100% 105%, rgba(124, 144, 112, 0.22) 0%, rgba(124, 144, 112, 0) 60%),
+          radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
+        `,
         minHeight: "100dvh",
         color: COR.textoPrincipal,
         display: "flex",
@@ -164,7 +168,7 @@ function TelaAutenticacao() {
           border: `1px solid ${COR.linha}`,
           borderRadius: "22px",
           padding: "36px 28px",
-          boxShadow: "0 2px 8px rgba(62, 58, 49, 0.04), 0 12px 32px rgba(62, 58, 49, 0.08)",
+          boxShadow: "0 2px 8px rgba(62, 58, 49, 0.05), 0 20px 48px rgba(62, 58, 49, 0.10)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "44px", height: "44px", borderRadius: "50%", background: COR.saugeClaro, margin: "0 auto 16px", fontSize: "18px" }}>
@@ -335,7 +339,7 @@ function TelaNovaSenha() {
   const estiloInput = {
     width: "100%",
     boxSizing: "border-box",
-    fontSize: "14.5px",
+    fontSize: "16px",
     padding: "12px 14px",
     paddingRight: "38px",
     borderRadius: "10px",
