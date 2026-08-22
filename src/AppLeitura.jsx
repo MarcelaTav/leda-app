@@ -492,13 +492,11 @@ function AppLeitura({ userId, userEmail, onSignOut }) {
       style={{
         fontFamily: SERIF,
         background: COR.fundo,
-        height: "100vh",
+        height: "100dvh",
         color: COR.textoPrincipal,
         maxWidth: "480px",
         margin: "0 auto",
-        borderRadius: "18px",
         overflow: "hidden",
-        border: `1px solid ${COR.linha}`,
         display: "flex",
         flexDirection: "column",
       }}
