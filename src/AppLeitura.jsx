@@ -441,7 +441,7 @@ function usarValorPersistido(chave, valorInicial, userId) {
   return { valor, loaded, statusSalvamento, salvar };
 }
 
-function AppLeitura({ userId, userEmail, onSignOut }) {
+function AppLeitura({ userId, userEmail, userName, onSignOut }) {
   const [aba, setAba] = useState("estante");
   const [buscaResenhaPedida, setBuscaResenhaPedida] = useState(null); // { texto, ts }
 
@@ -515,7 +515,7 @@ function AppLeitura({ userId, userEmail, onSignOut }) {
           borderBottom: `1px solid ${COR.linha}`,
         }}
       >
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>{userEmail}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>[APPLEITURA-DEBUG] {userName || userEmail}</span>
         <span onClick={onSignOut} style={{ cursor: "pointer", textDecoration: "underline", flexShrink: 0 }}>
           Sair
         </span>
