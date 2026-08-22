@@ -164,25 +164,44 @@ function TelaAutenticacao() {
         style={{
           width: "100%",
           maxWidth: "380px",
-          background: COR.cartao,
-          border: `1px solid ${COR.linha}`,
-          borderRadius: "22px",
-          padding: "36px 28px",
-          boxShadow: "0 2px 8px rgba(62, 58, 49, 0.05), 0 20px 48px rgba(62, 58, 49, 0.10)",
+          background: "rgba(255, 253, 248, 0.86)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+          border: `1px solid rgba(231, 223, 204, 0.7)`,
+          borderRadius: "24px",
+          padding: "38px 28px",
+          boxShadow: "0 2px 10px rgba(62, 58, 49, 0.05), 0 24px 56px rgba(62, 58, 49, 0.12)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "44px", height: "44px", borderRadius: "50%", background: COR.saugeClaro, margin: "0 auto 16px", fontSize: "18px" }}>
-          📚
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50px", height: "50px", borderRadius: "50%", background: `radial-gradient(circle at 35% 30%, #F3ECD9 0%, ${COR.saugeClaro} 75%)`, margin: "0 auto 18px", boxShadow: "0 4px 14px rgba(124, 144, 112, 0.22)" }}>
+          <svg viewBox="0 0 48 48" width="26" height="26">
+            <circle cx="24" cy="15" r="8.5" fill="#E7A99A" opacity="0.5" />
+            <path
+              d="M6 17 C6 15 10 13 16 14 C20 14.6 23 16 24 18 C25 16 28 14.6 32 14 C38 13 42 15 42 17 L42 32 C42 30 38 28 32 28.6 C28 29.2 25 30.6 24 32.4 C23 30.6 20 29.2 16 28.6 C10 28 6 30 6 32 Z"
+              fill="none"
+              stroke={COR.saugeEscuro}
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+            <path d="M24 18 L24 32.4" stroke={COR.saugeEscuro} strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
         </div>
-        <div style={{ fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.16em", textTransform: "uppercase", color: COR.saugeEscuro, textAlign: "center", marginBottom: "6px" }}>
-          Leda
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.16em", textTransform: "uppercase", color: COR.saugeEscuro, textAlign: "center", marginBottom: "6px" }}>
+          <span>Leda</span>
+          <svg viewBox="0 0 20 20" width="10" height="10" style={{ opacity: 0.75 }}>
+            <path d="M10 2 C11 6 14 7 18 8 C14 9 11 11 10 15 C9 11 6 9 2 8 C6 7 9 6 10 2 Z" fill={COR.sauge} />
+          </svg>
         </div>
         <h1 style={{ fontSize: "23px", fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
           {titulo}
         </h1>
-        <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", marginBottom: "26px" }}>
+        <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", marginBottom: "18px" }}>
           {subtitulo}
         </div>
+        <svg viewBox="0 0 120 14" width="70" height="8" style={{ display: "block", margin: "0 auto 24px" }}>
+          <path d="M2 2 C 30 14, 90 14, 118 2" fill="none" stroke={COR.sauge} strokeWidth="1.3" strokeLinecap="round" opacity="0.55" />
+        </svg>
 
         <form onSubmit={enviar} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           {modo === "criar" && (
