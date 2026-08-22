@@ -515,16 +515,11 @@ export default function Root() {
   }
 
   return (
-    <>
-      <div style={{ background: "#FFF3B0", color: "#3E3A31", padding: "10px", fontSize: "11px", wordBreak: "break-all", fontFamily: "monospace" }}>
-        DEBUG userName: "{sessao.user.user_metadata?.nome || "(vazio)"}" | metadata bruto: {JSON.stringify(sessao.user.user_metadata)}
-      </div>
-      <AppLeitura
-        userId={sessao.user.id}
-        userEmail={sessao.user.email}
-        userName={sessao.user.user_metadata?.nome || ""}
-        onSignOut={() => supabase.auth.signOut()}
-      />
-    </>
+    <AppLeitura
+      userId={sessao.user.id}
+      userEmail={sessao.user.email}
+      userName={sessao.user.user_metadata?.nome || ""}
+      onSignOut={() => supabase.auth.signOut()}
+    />
   );
 }
