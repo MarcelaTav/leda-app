@@ -67,12 +67,13 @@ function TelaAutenticacao() {
       style={{
         fontFamily: SERIF,
         background: COR.fundo,
-        minHeight: "100vh",
+        minHeight: "100dvh",
         color: COR.textoPrincipal,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
+        boxSizing: "border-box",
       }}
     >
       <div
@@ -189,7 +190,7 @@ export default function Root() {
 
   if (sessao === undefined) {
     return (
-      <div style={{ fontFamily: SANS, background: COR.fundo, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
+      <div style={{ fontFamily: SANS, background: COR.fundo, minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
         Carregando…
       </div>
     );
