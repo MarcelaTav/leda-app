@@ -515,7 +515,7 @@ function AppLeitura({ userId, userEmail, userName, onSignOut }) {
           borderBottom: `1px solid ${COR.linha}`,
         }}
       >
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>[APPLEITURA-DEBUG] {userName || userEmail}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%" }}>{userName || userEmail}</span>
         <span onClick={onSignOut} style={{ cursor: "pointer", textDecoration: "underline", flexShrink: 0 }}>
           Sair
         </span>
