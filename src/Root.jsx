@@ -151,7 +151,10 @@ function TelaAutenticacao() {
           radial-gradient(ellipse 65% 50% at 100% 105%, rgba(124, 144, 112, 0.22) 0%, rgba(124, 144, 112, 0) 60%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
-        minHeight: "100dvh",
+        minHeight: "100%",
+        height: "100%",
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
         display: "flex",
         alignItems: "center",
@@ -397,7 +400,10 @@ function TelaNovaSenha() {
       style={{
         fontFamily: SERIF,
         background: `radial-gradient(circle at 50% 0%, #FBF7EC 0%, ${COR.fundo} 60%)`,
-        minHeight: "100dvh",
+        minHeight: "100%",
+        height: "100%",
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
         display: "flex",
         alignItems: "center",
@@ -500,7 +506,7 @@ export default function Root() {
 
   if (sessao === undefined) {
     return (
-      <div style={{ fontFamily: SANS, background: COR.fundo, minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
+      <div style={{ fontFamily: SANS, background: COR.fundo, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
         Carregando…
       </div>
     );
