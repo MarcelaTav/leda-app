@@ -355,6 +355,7 @@ function usarListaPersistida(chave, userId) {
       }
     } catch (e) {
       console.error(`Falha ao salvar ${chave}:`, e);
+      window.__debugErro = `${chave}: ${e && e.message ? e.message : JSON.stringify(e)}`;
       setStatusSalvamento("pendente");
     } finally {
       sincronizandoRef.current = false;
@@ -425,6 +426,7 @@ function usarValorPersistido(chave, valorInicial, userId) {
       }
     } catch (e) {
       console.error(`Falha ao salvar ${chave}:`, e);
+      window.__debugErro = `${chave}: ${e && e.message ? e.message : JSON.stringify(e)}`;
       setStatusSalvamento("pendente");
     } finally {
       sincronizandoRef.current = false;
@@ -439,6 +441,22 @@ function usarValorPersistido(chave, valorInicial, userId) {
   }
 
   return { valor, loaded, statusSalvamento, salvar };
+}
+
+function DebugErroSalvar() {
+  const [erro, setErro] = useState(null);
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (window.__debugErro) setErro(window.__debugErro);
+    }, 500);
+    return () => clearInterval(id);
+  }, []);
+  if (!erro) return null;
+  return (
+    <div style={{ background: "#FFD6D6", color: "#7A1F1F", padding: "8px 10px", fontSize: "10.5px", wordBreak: "break-all", fontFamily: "monospace" }}>
+      ERRO AO SALVAR: {erro}
+    </div>
+  );
 }
 
 function AppLeitura({ userId, userEmail, userName, onSignOut }) {
@@ -501,6 +519,7 @@ function AppLeitura({ userId, userEmail, userName, onSignOut }) {
         flexDirection: "column",
       }}
     >
+      <DebugErroSalvar />
       <div
         style={{
           flexShrink: 0,
@@ -869,7 +888,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
                         setTitulo(e.target.value);
                       }
                     }}
-                    style={{ width: "100%", boxSizing: "border-box", fontSize: "13.5px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal }}
+                    style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal }}
                   >
                     <option value="">Selecione um livro da sua Estante</option>
                     {livros.map((l) => (
@@ -907,7 +926,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
                 <select
                   value={genero}
                   onChange={(e) => setGenero(e.target.value)}
-                  style={{ width: "100%", boxSizing: "border-box", fontSize: "13.5px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal }}
+                  style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal }}
                 >
                   <option value="">Gênero (opcional)</option>
                   {GENEROS.map((g) => (
@@ -2171,7 +2190,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                       atualizarGenero(aberto.id, e.target.value);
                     }
                   }}
-                  style={{ width: "100%", boxSizing: "border-box", fontSize: "13.5px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", marginBottom: "10px", color: COR.textoPrincipal }}
+                  style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", marginBottom: "10px", color: COR.textoPrincipal }}
                 >
                   <option value="">Gênero (opcional)</option>
                   {GENEROS.map((g) => (
@@ -2399,7 +2418,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
               <select
                 value={novoGenero}
                 onChange={(e) => setNovoGenero(e.target.value)}
-                style={{ fontSize: "14px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF", color: novoGenero ? COR.textoPrincipal : COR.textoSecundario }}
+                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF", color: novoGenero ? COR.textoPrincipal : COR.textoSecundario }}
               >
                 <option value="">Gênero (opcional)</option>
                 {GENEROS.map((g) => (
@@ -2422,7 +2441,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
               <select
                 value={novoStatus}
                 onChange={(e) => setNovoStatus(e.target.value)}
-                style={{ fontSize: "14px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF" }}
+                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF" }}
               >
                 {STATUSES.map((s) => (
                   <option key={s.key} value={s.key}>
@@ -3201,7 +3220,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
               <form onSubmit={salvarResenha} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <div>
                   <div style={{ fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>Livro</div>
-                  <select value={livroId} onChange={(e) => setLivroId(e.target.value)} style={{ width: "100%", boxSizing: "border-box", fontSize: "14px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, background: "#FFFFFF", color: COR.textoPrincipal }}>
+                  <select value={livroId} onChange={(e) => setLivroId(e.target.value)} style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, background: "#FFFFFF", color: COR.textoPrincipal }}>
                     <option value="">Selecione um livro da sua estante</option>
                     {livros.map((l) => (
                       <option key={l.id} value={l.id}>
@@ -3446,7 +3465,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             <form onSubmit={salvarResenha} style={{ display: "flex", flexDirection: "column", gap: "10px", fontFamily: SANS }}>
             <div>
               <div style={{ fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>Livro</div>
-              <select value={livroId} onChange={(e) => setLivroId(e.target.value)} style={{ width: "100%", boxSizing: "border-box", fontSize: "14px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, background: "#FFFFFF", color: COR.textoPrincipal }}>
+              <select value={livroId} onChange={(e) => setLivroId(e.target.value)} style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, background: "#FFFFFF", color: COR.textoPrincipal }}>
                 <option value="">Selecione um livro da sua estante</option>
                 {livros.map((l) => (
                   <option key={l.id} value={l.id}>
