@@ -1413,7 +1413,6 @@ function PainelEstante({ livros }) {
       </div>
       </div>
     </div>
-    </div>
   );
 }
 
