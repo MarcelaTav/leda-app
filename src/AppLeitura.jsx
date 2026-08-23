@@ -782,7 +782,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "16px 20px 20px" }}>
             <div style={{ fontFamily: SERIF, fontSize: "19px", fontWeight: 700, color: COR.textoPrincipal, marginBottom: "6px" }}>
               {registroSelecionado.quantidade > 1 ? `${registroSelecionado.quantidade}× ` : ""}
@@ -861,7 +861,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "16px 20px 20px" }}>
             <form id="form-sementes" onSubmit={salvarRegistro} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
@@ -871,7 +871,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
                   min="1"
                   value={quantidade}
                   onChange={(e) => setQuantidade(e.target.value)}
-                  style={{ width: "90px", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+                  style={{ boxSizing: "border-box", width: "90px", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
                 />
               </div>
 
@@ -952,7 +952,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
                   value={anotacao}
                   onChange={(e) => setAnotacao(e.target.value)}
                   placeholder="Pra quem foi, onde, como foi essa história…"
-                  style={{ width: "100%", boxSizing: "border-box", height: "260px", overflowY: "auto", resize: "none", fontSize: "16px", padding: "10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                  style={{ width: "100%", boxSizing: "border-box", height: "260px", overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "10px", borderRadius: "8px", border: `1px solid ${COR.linha}`, fontFamily: "inherit", color: COR.textoPrincipal }}
                 />
               </div>
 
@@ -1029,7 +1029,7 @@ function TelaSementes({ doacoesState, doacaoPrefState, livros, pendente }) {
       </div>
 
       {sementes.length > 0 && (
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", borderTop: `1px solid ${COR.linha}` }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", borderTop: `1px solid ${COR.linha}` }}>
           <div style={{ padding: "16px 20px 20px" }}>
             <div style={{ fontFamily: SANS, fontSize: "12.5px", fontWeight: 600, color: COR.textoPrincipal, marginBottom: "10px" }}>O que você já guardou aqui</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -1521,7 +1521,7 @@ function ProgressoLeitura({ livro, onDefinirMeta, onCheckin }) {
             value={paginasInput}
             onChange={(e) => setPaginasInput(e.target.value)}
             placeholder="Quantas páginas tem o livro?"
-            style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+            style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
           />
           <input
             type="number"
@@ -1529,7 +1529,7 @@ function ProgressoLeitura({ livro, onDefinirMeta, onCheckin }) {
             value={metaInput}
             onChange={(e) => setMetaInput(e.target.value)}
             placeholder="Meta de páginas por dia"
-            style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+            style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
           />
           {erroSetup && <div style={{ fontSize: "12px", color: COR.alerta }}>{erroSetup}</div>}
           <button type="submit" style={{ fontSize: "13px", fontWeight: 600, padding: "9px", borderRadius: "8px", border: "none", background: COR.sauge, color: "#FFFFFF", cursor: "pointer" }}>
@@ -1605,13 +1605,13 @@ function ProgressoLeitura({ livro, onDefinirMeta, onCheckin }) {
             value={paginaEdit}
             onChange={(e) => setPaginaEdit(e.target.value)}
             placeholder="Em que página você parou?"
-            style={{ fontSize: "16px", padding: "7px 9px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+            style={{ boxSizing: "border-box", fontSize: "16px", padding: "7px 9px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
           />
           <input
             value={notaEdit}
             onChange={(e) => setNotaEdit(e.target.value)}
             placeholder="Alguma anotação desse dia? (opcional)"
-            style={{ fontSize: "16px", padding: "7px 9px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+            style={{ boxSizing: "border-box", fontSize: "16px", padding: "7px 9px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
           />
           {erroCheckin && <div style={{ fontSize: "11.5px", color: COR.alerta }}>{erroCheckin}</div>}
           <div style={{ display: "flex", gap: "6px" }}>
@@ -1958,7 +1958,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "16px 20px 20px" }}>
             <div style={{ fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>Status de leitura</div>
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
@@ -2022,7 +2022,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 value={aberto.nota}
                 onChange={(e) => atualizarNota(aberto.id, e.target.value)}
                 placeholder="Escreva o que quiser sobre esse livro…"
-                style={{ width: "100%", boxSizing: "border-box", height: "180px", overflowY: "auto", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${aberto.nota && aberto.nota.trim() ? COR.saugeEscuro + "55" : COR.linha}`, fontFamily: "inherit", resize: "vertical", color: COR.textoPrincipal, background: "#FFFFFF" }}
+                style={{ width: "100%", boxSizing: "border-box", height: "180px", overflowY: "auto", overflowX: "hidden", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${aberto.nota && aberto.nota.trim() ? COR.saugeEscuro + "55" : COR.linha}`, fontFamily: "inherit", resize: "vertical", color: COR.textoPrincipal, background: "#FFFFFF" }}
               />
             </div>
           </div>
@@ -2084,7 +2084,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                   display: "flex",
                   alignItems: "flex-start",
                   justifyContent: "center",
-                  overflowY: "auto",
+                  overflowY: "auto", overflowX: "hidden",
                   zIndex: 1100,
                 }}
               >
@@ -2289,7 +2289,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                           value={novoNomeMarcador}
                           onChange={(e) => setNovoNomeMarcador(e.target.value)}
                           placeholder="Nome do novo marcador"
-                          style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+                          style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
                         />
                         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
                           {CORES_MARCADOR.map((c) => (
@@ -2348,7 +2348,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
   if (vista === "adicionarLivro") {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "18px 20px 14px" }}>
             <button
               onClick={cancelarAdicionarLivro}
@@ -2374,7 +2374,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 autoCorrect="off"
                 spellCheck="false"
                 name="titulo-livro-leda"
-                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
               />
               <input
                 value={novoAutor}
@@ -2384,7 +2384,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 autoCorrect="off"
                 spellCheck="false"
                 name="autor-livro-leda"
-                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
               />
 
               <div>
@@ -2423,14 +2423,14 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                   autoCorrect="off"
                   spellCheck="false"
                   name="localizacao-livro-leda"
-                  style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
                 />
               )}
 
               <select
                 value={novoGenero}
                 onChange={(e) => setNovoGenero(e.target.value)}
-                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF", color: novoGenero ? COR.textoPrincipal : COR.textoSecundario }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF", color: novoGenero ? COR.textoPrincipal : COR.textoSecundario }}
               >
                 <option value="">Gênero (opcional)</option>
                 {GENEROS.map((g) => (
@@ -2446,14 +2446,14 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                   value={novoGeneroCustom}
                   onChange={(e) => setNovoGeneroCustom(e.target.value)}
                   placeholder="Digite o gênero"
-                  style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
                 />
               )}
 
               <select
                 value={novoStatus}
                 onChange={(e) => setNovoStatus(e.target.value)}
-                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF" }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40`, background: "#FFFFFF" }}
               >
                 {STATUSES.map((s) => (
                   <option key={s.key} value={s.key}>
@@ -2480,7 +2480,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 value={novoIndicadoPor}
                 onChange={(e) => setNovoIndicadoPor(e.target.value)}
                 placeholder="Indicado por (opcional)"
-                style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
               />
 
               <div ref={marcadoresAdicionarRef}>
@@ -2541,7 +2541,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                         value={novoNomeMarcador}
                         onChange={(e) => setNovoNomeMarcador(e.target.value)}
                         placeholder="Nome do novo marcador"
-                        style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+                        style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
                       />
                       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
                         {CORES_MARCADOR.map((c) => (
@@ -2841,7 +2841,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 value={novoNomeMarcador}
                 onChange={(e) => setNovoNomeMarcador(e.target.value)}
                 placeholder="Nome do novo marcador (ex: Reler algum dia)"
-                style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
               />
               <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
                 {CORES_MARCADOR.map((c) => (
@@ -2903,7 +2903,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
       </div>
       )}
 
-      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
       {vista === "painel" ? (
         <PainelEstante livros={livros} />
       ) : (
@@ -3166,7 +3166,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "0 20px 20px", fontFamily: SANS }}>
 
             {modo === "leitura" ? (
@@ -3189,7 +3189,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     lineHeight: 1.65,
                     whiteSpace: "pre-wrap",
                     height: alturaCaixaTexto,
-                    overflowY: "auto",
+                    overflowY: "auto", overflowX: "hidden",
                     padding: "2px 2px 2px 0",
                     borderLeft: `3px solid ${COR.melClaro}`,
                     paddingLeft: "12px",
@@ -3215,7 +3215,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                         borderRadius: "8px",
                         marginBottom: "12px",
                         height: alturaCaixaAutor,
-                        overflowY: "auto",
+                        overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
                       }}
                     >
@@ -3251,7 +3251,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                       <span style={{ fontSize: "12px", color: COR.textoPrincipal }}>{nota.toFixed(2).replace(/\.?0+$/, "") || "0"}</span>
                     </span>
                   </div>
-                  <input type="range" min="0" max="5" step="0.25" value={nota} onChange={(e) => setNota(parseFloat(e.target.value))} style={{ width: "100%" }} />
+                  <input type="range" min="0" max="5" step="0.25" value={nota} onChange={(e) => setNota(parseFloat(e.target.value))} style={{ boxSizing: "border-box", width: "100%" }} />
                 </div>
 
                 <div>
@@ -3260,7 +3260,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     value={texto}
                     onChange={(e) => setTexto(e.target.value)}
                     placeholder="O que você achou desse livro?"
-                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
                   />
                 </div>
 
@@ -3270,7 +3270,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     value={sobreAutor}
                     onChange={(e) => setSobreAutor(e.target.value)}
                     placeholder="Opcional — seu estilo, outras obras, o que quiser comentar"
-                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
                   />
                 </div>
 
@@ -3381,7 +3381,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           : `${resenhasOrdenadas.length} resenhas escritas`}
       </div>
 
-    <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
       {pendente && (
         <div style={{ margin: "12px 16px 0", padding: "8px 12px", borderRadius: "10px", background: COR.saugeClaro, fontFamily: SANS, fontSize: "11.5px", color: COR.saugeEscuro }}>
           Modo de teste: essa versão ainda não guarda os dados de forma permanente.
@@ -3441,7 +3441,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "center",
-            overflowY: "auto",
+            overflowY: "auto", overflowX: "hidden",
             zIndex: 1000,
           }}
         >
@@ -3496,7 +3496,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   <span style={{ fontSize: "12px", color: COR.textoPrincipal }}>{nota.toFixed(2).replace(/\.?0+$/, "") || "0"}</span>
                 </span>
               </div>
-              <input type="range" min="0" max="5" step="0.25" value={nota} onChange={(e) => setNota(parseFloat(e.target.value))} style={{ width: "100%" }} />
+              <input type="range" min="0" max="5" step="0.25" value={nota} onChange={(e) => setNota(parseFloat(e.target.value))} style={{ boxSizing: "border-box", width: "100%" }} />
             </div>
 
             <div>
@@ -3505,7 +3505,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}
                 placeholder="O que você achou desse livro?"
-                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
               />
             </div>
 
@@ -3515,7 +3515,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 value={sobreAutor}
                 onChange={(e) => setSobreAutor(e.target.value)}
                 placeholder="Opcional — seu estilo, outras obras, o que quiser comentar"
-                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
               />
             </div>
 
@@ -4100,7 +4100,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                 value={novoNomeMarcador}
                 onChange={(e) => setNovoNomeMarcador(e.target.value)}
                 placeholder="Nome do novo marcador"
-                style={{ fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
+                style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
               />
               <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
                 {CORES_MARCADOR.map((c) => (
@@ -4146,7 +4146,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
         )}
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
         <div
           style={{
             padding: "16px",
@@ -4325,7 +4325,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
   if (vista === "obra") {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
         <div style={{ padding: "18px 20px 14px" }}>
           <button
             onClick={irParaLista}
@@ -4469,7 +4469,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
         </div>
 
         {/* área de leitura — ocupa todo o espaço disponível, como a página de um livro */}
-        <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", background: `linear-gradient(180deg, ${corClara}55, ${COR.fundo} 140px)` }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", background: `linear-gradient(180deg, ${corClara}55, ${COR.fundo} 140px)` }}>
           <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px 20px 40px" }}>
             <div
               style={{
@@ -4613,7 +4613,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
         </div>
 
         {passoCriacao === "infoObra" && (
-          <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "0 20px 20px" }}>
               <h1 style={{ fontSize: "22px", fontWeight: 600, margin: "0 0 4px", fontFamily: SERIF }}>Comece uma obra nova</h1>
               <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, marginBottom: "18px" }}>
@@ -4625,20 +4625,20 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   onChange={(e) => setTituloObra(e.target.value)}
                   placeholder="Título da obra"
                   autoFocus
-                  style={{ fontSize: "16px", padding: "11px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "11px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
                 />
                 <input
                   value={generoObra}
                   onChange={(e) => setGeneroObra(e.target.value)}
                   placeholder="Gênero (opcional)"
-                  style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
                 />
                 <textarea
                   value={sinopseObra}
                   onChange={(e) => setSinopseObra(e.target.value)}
                   placeholder="Uma sinopse curta (opcional)"
                   rows={3}
-                  style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical" }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical" }}
                 />
 
                 <div>
@@ -4776,7 +4776,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   display: "flex",
                   alignItems: "flex-start",
                   justifyContent: "center",
-                  overflowY: "auto",
+                  overflowY: "auto", overflowX: "hidden",
                   zIndex: 1000,
                 }}
               >
@@ -4920,7 +4920,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
               </div>
             )}
 
-            <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+            <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
               <div style={{ padding: "0 20px 20px" }}>
               {capitulosOrdenados.length === 0 ? (
                 <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", padding: "16px 8px", lineHeight: 1.6 }}>
@@ -5005,7 +5005,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
         )}
 
         {passoCriacao === "escrevendo" && (
-          <div style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
           <div style={{ padding: "18px 20px 20px" }}>
               <div style={{ fontFamily: SANS, fontSize: "11px", letterSpacing: "0.06em", textTransform: "uppercase", color: COR.textoSecundario, fontWeight: 700, marginBottom: "8px" }}>
                 Escrevendo capítulo
@@ -5034,7 +5034,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   value={tituloCap}
                   onChange={(e) => setTituloCap(e.target.value)}
                   placeholder="Título do capítulo"
-                  style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
+                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40` }}
                 />
 
                 <div ref={marcadorDiscretoRef}>
@@ -5107,7 +5107,7 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   value={textoCap}
                   onChange={(e) => setTextoCap(e.target.value)}
                   placeholder="Escreva aqui — sem pressa…"
-                  style={{ width: "100%", boxSizing: "border-box", height: "320px", overflowY: "auto", resize: "none", fontSize: "16px", lineHeight: 1.7, padding: "12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                  style={{ width: "100%", boxSizing: "border-box", height: "320px", overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", lineHeight: 1.7, padding: "12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
                 />
 
                 <div onClick={() => setPublicadoCap(!publicadoCap)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "10px", background: corClara, cursor: "pointer" }}>
