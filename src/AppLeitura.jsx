@@ -510,7 +510,7 @@ function AppLeitura({ userId, userEmail, userName, onSignOut }) {
       style={{
         fontFamily: SERIF,
         background: COR.fundo,
-        height: "100dvh",
+        height: "100%",
         color: COR.textoPrincipal,
         maxWidth: "480px",
         margin: "0 auto",
@@ -2370,12 +2370,20 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 onChange={(e) => setNovoTitulo(e.target.value)}
                 placeholder="Título do livro"
                 autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                name="titulo-livro-leda"
                 style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
               />
               <input
                 value={novoAutor}
                 onChange={(e) => setNovoAutor(e.target.value)}
                 placeholder="Autor (opcional)"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                name="autor-livro-leda"
                 style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
               />
 
@@ -2411,6 +2419,10 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                   value={novaLocalizacao}
                   onChange={(e) => setNovaLocalizacao(e.target.value)}
                   placeholder="Onde está guardado? (ex: estante da sala, emprestado pro Rafael)"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  name="localizacao-livro-leda"
                   style={{ fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${COR_NOVO_LIVRO}40` }}
                 />
               )}
