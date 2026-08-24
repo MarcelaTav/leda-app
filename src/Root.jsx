@@ -53,7 +53,7 @@ function TelaAutenticacao() {
     width: "100%",
     boxSizing: "border-box",
     fontSize: "16px",
-    padding: "12px 14px",
+    padding: "9px 13px",
     borderRadius: "10px",
     border: `1.5px solid ${focado ? COR.sauge : COR.linha}`,
     fontFamily: SANS,
@@ -147,8 +147,8 @@ function TelaAutenticacao() {
       style={{
         fontFamily: SERIF,
         background: `
-          radial-gradient(ellipse 70% 45% at 18% -8%, rgba(224, 158, 148, 0.30) 0%, rgba(224, 158, 148, 0) 60%),
-          radial-gradient(ellipse 65% 50% at 100% 105%, rgba(124, 144, 112, 0.22) 0%, rgba(124, 144, 112, 0) 60%),
+          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.52) 0%, rgba(224, 158, 148, 0) 62%),
+          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
         minHeight: "100%",
@@ -172,7 +172,7 @@ function TelaAutenticacao() {
           WebkitBackdropFilter: "blur(18px)",
           border: `1px solid rgba(231, 223, 204, 0.7)`,
           borderRadius: "24px",
-          padding: "38px 28px",
+          padding: "30px 26px",
           boxShadow: "0 2px 10px rgba(62, 58, 49, 0.05), 0 24px 56px rgba(62, 58, 49, 0.12)",
         }}
       >
