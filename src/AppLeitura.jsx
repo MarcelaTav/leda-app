@@ -1508,35 +1508,7 @@ function ProgressoLeitura({ livro, onDefinirMeta, onCheckin }) {
   }
 
   if (!livro.paginasTotais) {
-    return (
-      <div style={{ background: COR.saugeClaro, borderRadius: "12px", padding: "14px", marginBottom: "14px", fontFamily: SANS }}>
-        <div style={{ fontSize: "13px", fontWeight: 600, color: COR.saugeEscuro, marginBottom: "8px" }}>
-          📈 Acompanhar o progresso dessa leitura?
-        </div>
-        <form onSubmit={salvarSetup} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <input
-            type="number"
-            min="1"
-            value={paginasInput}
-            onChange={(e) => setPaginasInput(e.target.value)}
-            placeholder="Quantas páginas tem o livro?"
-            style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
-          />
-          <input
-            type="number"
-            min="1"
-            value={metaInput}
-            onChange={(e) => setMetaInput(e.target.value)}
-            placeholder="Meta de páginas por dia"
-            style={{ boxSizing: "border-box", fontSize: "16px", padding: "8px 10px", borderRadius: "8px", border: `1px solid ${COR.linha}` }}
-          />
-          {erroSetup && <div style={{ fontSize: "12px", color: COR.alerta }}>{erroSetup}</div>}
-          <button type="submit" style={{ fontSize: "13px", fontWeight: 600, padding: "9px", borderRadius: "8px", border: "none", background: COR.sauge, color: "#FFFFFF", cursor: "pointer" }}>
-            Começar a acompanhar
-          </button>
-        </form>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -3183,16 +3155,19 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 </div>
                 <div
                   style={{
-                    fontSize: "14px",
+                    fontSize: "15px",
                     color: COR.textoPrincipal,
-                    lineHeight: 1.65,
+                    lineHeight: 1.75,
                     whiteSpace: "pre-wrap",
                     height: alturaCaixaTexto,
                     overflowY: "auto", overflowX: "hidden",
-                    padding: "2px 2px 2px 0",
-                    borderLeft: `3px solid ${COR.melClaro}`,
-                    paddingLeft: "12px",
-                    marginBottom: "12px",
+                    background: COR.cartao,
+                    border: `1.5px solid ${COR.melClaro}`,
+                    borderLeft: `4px solid ${COR.mel}`,
+                    borderRadius: "12px",
+                    padding: "16px 16px 16px 18px",
+                    marginBottom: "22px",
+                    boxShadow: "inset 0 1px 3px rgba(62, 58, 49, 0.04)",
                     boxSizing: "border-box",
                     cursor: "default",
                   }}
@@ -3202,17 +3177,18 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
 
                 {resenhaSelecionada.sobreAutor && (
                   <>
-                    <div style={{ fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "4px" }}>Sobre o autor</div>
+                    <div style={{ fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.1em", textTransform: "uppercase", color: COR.melEscuro, marginBottom: "7px" }}>Sobre o autor</div>
                     <div
                       style={{
-                        fontSize: "13px",
+                        fontSize: "14px",
                         color: COR.textoPrincipal,
-                        lineHeight: 1.6,
+                        lineHeight: 1.7,
                         whiteSpace: "pre-wrap",
-                        padding: "10px 12px",
+                        padding: "14px 16px",
                         background: COR.melClaro,
-                        borderRadius: "8px",
-                        marginBottom: "12px",
+                        border: `1.5px solid ${COR.mel}55`,
+                        borderRadius: "12px",
+                        marginBottom: "18px",
                         height: alturaCaixaAutor,
                         overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
@@ -3259,7 +3235,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     value={texto}
                     onChange={(e) => setTexto(e.target.value)}
                     placeholder="O que você achou desse livro?"
-                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", lineHeight: 1.6, padding: "14px 15px", borderRadius: "12px", border: `1.5px solid ${COR.mel}66`, background: "#FFFEFB", boxShadow: "inset 0 1px 3px rgba(62, 58, 49, 0.05)", fontFamily: "inherit", color: COR.textoPrincipal, outline: "none" }}
                   />
                 </div>
 
@@ -3269,7 +3245,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     value={sobreAutor}
                     onChange={(e) => setSobreAutor(e.target.value)}
                     placeholder="Opcional — seu estilo, outras obras, o que quiser comentar"
-                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                    style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", lineHeight: 1.6, padding: "14px 15px", borderRadius: "12px", border: `1.5px solid ${COR.mel}66`, background: COR.melClaro + "55", boxShadow: "inset 0 1px 3px rgba(62, 58, 49, 0.05)", fontFamily: "inherit", color: COR.textoPrincipal, outline: "none" }}
                   />
                 </div>
 
@@ -3436,7 +3412,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             background: "rgba(62,58,49,0.35)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
-            padding: "16px",
+            padding: "8px",
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "center",
@@ -3448,15 +3424,15 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             onClick={(e) => e.stopPropagation()}
             style={{
               background: COR.cartao,
-              borderRadius: "18px",
-              padding: "20px",
+              borderRadius: "20px",
+              padding: "22px 18px",
               width: "100%",
               maxWidth: "480px",
               boxSizing: "border-box",
               fontFamily: SANS,
-              border: `2px solid ${COR.melEscuro}55`,
-              boxShadow: `0 8px 28px rgba(62,58,49,0.28), 0 0 0 4px ${COR.melEscuro}0D`,
-              margin: "20px auto",
+              border: `1.5px solid ${COR.melEscuro}40`,
+              boxShadow: `0 10px 34px rgba(62,58,49,0.30), 0 0 0 5px ${COR.melEscuro}0A`,
+              margin: "8px auto",
             }}
           >
             <button
@@ -3504,7 +3480,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}
                 placeholder="O que você achou desse livro?"
-                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaTexto, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", lineHeight: 1.6, padding: "14px 15px", borderRadius: "12px", border: `1.5px solid ${COR.mel}66`, background: "#FFFEFB", boxShadow: "inset 0 1px 3px rgba(62, 58, 49, 0.05)", fontFamily: "inherit", color: COR.textoPrincipal, outline: "none" }}
               />
             </div>
 
@@ -3514,7 +3490,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 value={sobreAutor}
                 onChange={(e) => setSobreAutor(e.target.value)}
                 placeholder="Opcional — seu estilo, outras obras, o que quiser comentar"
-                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${COR.melEscuro}40`, fontFamily: "inherit", color: COR.textoPrincipal }}
+                style={{ width: "100%", boxSizing: "border-box", height: alturaCaixaAutor, overflowY: "auto", overflowX: "hidden", resize: "none", fontSize: "16px", lineHeight: 1.6, padding: "14px 15px", borderRadius: "12px", border: `1.5px solid ${COR.mel}66`, background: COR.melClaro + "55", boxShadow: "inset 0 1px 3px rgba(62, 58, 49, 0.05)", fontFamily: "inherit", color: COR.textoPrincipal, outline: "none" }}
               />
             </div>
 
