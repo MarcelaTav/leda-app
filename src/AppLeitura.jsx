@@ -2874,7 +2874,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
       </div>
       )}
 
-      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
       {vista === "painel" ? (
         <PainelEstante livros={livros} />
       ) : (
@@ -3137,12 +3137,20 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
-          <div style={{ padding: "0 20px 20px", fontFamily: SANS }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
+          <div
+            style={{
+              padding: "0 20px 20px",
+              fontFamily: SANS,
+              ...(modo === "leitura"
+                ? { height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }
+                : {}),
+            }}
+          >
 
             {modo === "leitura" ? (
               <>
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px", marginBottom: "6px" }}>
+                <div style={{ flexShrink: 0, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px", marginBottom: "6px" }}>
                   <div style={{ fontFamily: SERIF, fontSize: "18px", fontWeight: 700, color: COR.textoPrincipal, minWidth: 0 }}>
                     {resenhaSelecionada.livroTitulo}
                   </div>
@@ -3150,16 +3158,17 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     {resenhaSelecionada.publica ? "Pública" : "Privada"}
                   </span>
                 </div>
-                <div style={{ marginBottom: "10px" }}>
+                <div style={{ flexShrink: 0, marginBottom: "10px" }}>
                   <Estrelas valor={resenhaSelecionada.nota} tamanho={16} />
                 </div>
                 <div
                   style={{
+                    flex: 1,
+                    minHeight: "160px",
                     fontSize: "15px",
                     color: COR.textoPrincipal,
                     lineHeight: 1.75,
                     whiteSpace: "pre-wrap",
-                    height: alturaCaixaTexto,
                     overflowY: "auto", overflowX: "hidden",
                     background: COR.cartao,
                     border: `1.5px solid ${COR.melClaro}`,
@@ -3177,9 +3186,10 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
 
                 {resenhaSelecionada.sobreAutor && (
                   <>
-                    <div style={{ fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.1em", textTransform: "uppercase", color: COR.melEscuro, marginBottom: "7px" }}>Sobre o autor</div>
+                    <div style={{ flexShrink: 0, fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.1em", textTransform: "uppercase", color: COR.melEscuro, marginBottom: "7px" }}>Sobre o autor</div>
                     <div
                       style={{
+                        flexShrink: 0,
                         fontSize: "14px",
                         color: COR.textoPrincipal,
                         lineHeight: 1.7,
@@ -3189,7 +3199,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                         border: `1.5px solid ${COR.mel}55`,
                         borderRadius: "12px",
                         marginBottom: "18px",
-                        height: alturaCaixaAutor,
+                        maxHeight: alturaCaixaAutor,
                         overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
                       }}
@@ -3199,7 +3209,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   </>
                 )}
 
-                <div style={{ fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "16px" }}>
+                <div style={{ flexShrink: 0, fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "16px" }}>
                   Atualizada em {formatarData(resenhaSelecionada.atualizadoEm)}
                 </div>
               </>
@@ -3356,7 +3366,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           : `${resenhasOrdenadas.length} resenhas escritas`}
       </div>
 
-    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
       {pendente && (
         <div style={{ margin: "12px 16px 0", padding: "8px 12px", borderRadius: "10px", background: COR.saugeClaro, fontFamily: SANS, fontSize: "11.5px", color: COR.saugeEscuro }}>
           Modo de teste: essa versão ainda não guarda os dados de forma permanente.
@@ -3409,14 +3419,15 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(62,58,49,0.35)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            padding: "8px",
+            background: "rgba(58,54,45,0.62)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            padding: "0 6px 6px",
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "center",
             overflowY: "auto", overflowX: "hidden",
+            overscrollBehavior: "contain",
             zIndex: 1000,
           }}
         >
@@ -3424,15 +3435,15 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             onClick={(e) => e.stopPropagation()}
             style={{
               background: COR.cartao,
-              borderRadius: "20px",
-              padding: "22px 18px",
+              borderRadius: "18px",
+              padding: "18px 13px",
               width: "100%",
               maxWidth: "480px",
               boxSizing: "border-box",
               fontFamily: SANS,
               border: `1.5px solid ${COR.melEscuro}40`,
               boxShadow: `0 10px 34px rgba(62,58,49,0.30), 0 0 0 5px ${COR.melEscuro}0A`,
-              margin: "8px auto",
+              margin: "0 auto 6px",
             }}
           >
             <button
@@ -4612,8 +4623,8 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   value={sinopseObra}
                   onChange={(e) => setSinopseObra(e.target.value)}
                   placeholder="Uma sinopse curta (opcional)"
-                  rows={3}
-                  style={{ boxSizing: "border-box", fontSize: "16px", padding: "10px 12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical" }}
+                  rows={12}
+                  style={{ boxSizing: "border-box", fontSize: "16px", lineHeight: 1.6, padding: "12px", borderRadius: "10px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical", minHeight: "320px" }}
                 />
 
                 <div>
@@ -4859,8 +4870,8 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                         value={sinopseObra}
                         onChange={(e) => setSinopseObra(e.target.value)}
                         placeholder="Uma sinopse curta (opcional)"
-                        rows={5}
-                        style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical" }}
+                        rows={10}
+                        style={{ width: "100%", boxSizing: "border-box", fontSize: "16px", lineHeight: 1.6, padding: "10px", borderRadius: "8px", border: `1.5px solid ${corBase}40`, fontFamily: "inherit", resize: "vertical", minHeight: "240px" }}
                       />
                     </div>
 
@@ -5148,9 +5159,9 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                   <button
                     type="button"
                     onClick={irParaLista}
-                    style={{ width: "100%", fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, background: "transparent", border: "none", padding: "10px 0 0", cursor: "pointer", textAlign: "center" }}
+                    style={{ width: "100%", fontFamily: SANS, fontSize: "13px", fontWeight: 600, color: corEscura, background: corClara, border: `1px solid ${corBase}30`, borderRadius: "10px", padding: "10px 12px", marginTop: "2px", cursor: "pointer", textAlign: "center" }}
                   >
-                    Escrever capítulo depois
+                    Escrever o próximo capítulo depois
                   </button>
                 )}
               </form>
