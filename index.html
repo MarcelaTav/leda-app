@@ -23,78 +23,10 @@
       #root {
         height: 100%;
       }
-      #leda-diag {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 999999;
-        background: #1b1b1b;
-        color: #7CFF9E;
-        font: 10px/1.35 ui-monospace, Menlo, monospace;
-        padding: 4px 6px;
-        white-space: pre-wrap;
-        pointer-events: none;
-      }
     </style>
   </head>
   <body>
     <div id="root"></div>
-    <div id="leda-diag">diagnostico carregando...</div>
-    <script>
-      (function () {
-        var alvo = document.getElementById("leda-diag");
-
-        function maiorElemento() {
-          var largura = document.documentElement.clientWidth;
-          var pior = null;
-          var piorDir = largura;
-          var todos = document.querySelectorAll("#root *");
-          for (var i = 0; i < todos.length; i++) {
-            var r = todos[i].getBoundingClientRect();
-            if (r.width > 0 && r.right > piorDir + 1) {
-              piorDir = r.right;
-              pior = todos[i];
-            }
-          }
-          if (!pior) return "nenhum elemento passa da borda";
-          var desc = pior.tagName.toLowerCase();
-          var t = (pior.textContent || "").trim().slice(0, 18);
-          if (t) desc += ' "' + t + '"';
-          return desc + " chega a " + Math.round(piorDir) + "px (tela " + largura + "px)";
-        }
-
-        function atualizar() {
-          var vv = window.visualViewport;
-          var linhas = [];
-          linhas.push(
-            "tela=" + document.documentElement.clientWidth +
-            "  scrollX=" + Math.round(window.scrollX) +
-            "  scrollY=" + Math.round(window.scrollY)
-          );
-          if (vv) {
-            linhas.push(
-              "visual: larg=" + Math.round(vv.width) +
-              " alt=" + Math.round(vv.height) +
-              " esq=" + Math.round(vv.offsetLeft) +
-              " topo=" + Math.round(vv.offsetTop) +
-              " zoom=" + vv.scale.toFixed(2)
-            );
-          } else {
-            linhas.push("visualViewport indisponivel");
-          }
-          linhas.push(maiorElemento());
-          alvo.textContent = linhas.join("\n");
-        }
-
-        setInterval(atualizar, 400);
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener("resize", atualizar);
-          window.visualViewport.addEventListener("scroll", atualizar);
-        }
-        window.addEventListener("scroll", atualizar, true);
-      })();
-    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
