@@ -2072,7 +2072,7 @@ function TelaEstante({ estado, pendente, resenhas, onVerResenhas, marcadoresStat
                 value={aberto.nota}
                 onChange={(e) => atualizarNota(aberto.id, e.target.value)}
                 placeholder="Escreva o que quiser sobre esse livro…"
-                style={{ width: "100%", boxSizing: "border-box", height: "180px", overflowY: "auto", overflowX: "hidden", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${aberto.nota && aberto.nota.trim() ? COR.saugeEscuro + "55" : COR.linha}`, fontFamily: "inherit", resize: "vertical", color: COR.textoPrincipal, background: "#FFFFFF" }}
+                style={{ width: "100%", boxSizing: "border-box", height: "340px", overflowY: "auto", overflowX: "hidden", fontSize: "16px", padding: "9px 10px", borderRadius: "8px", border: `1.5px solid ${aberto.nota && aberto.nota.trim() ? COR.saugeEscuro + "55" : COR.linha}`, fontFamily: "inherit", resize: "vertical", color: COR.textoPrincipal, background: "#FFFFFF" }}
               />
             </div>
           </div>
@@ -3204,10 +3204,10 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
   if (modalAberto) {
     return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          <div style={{ flexShrink: 0, padding: "20px 20px 10px", fontFamily: SANS }}>
+          <div style={{ flexShrink: 0, padding: "20px 20px 14px", fontFamily: SANS, borderBottom: `1px solid ${COR.melClaro}` }}>
             <button
               onClick={fecharTudo}
-              style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.melEscuro, background: "transparent", border: "none", padding: 0, marginBottom: "10px", cursor: "pointer" }}
+              style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.melEscuro, background: "transparent", border: "none", padding: 0, marginBottom: "12px", cursor: "pointer" }}
             >
               ← Minhas resenhas
             </button>
@@ -3229,7 +3229,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           >
           <div
             style={{
-              padding: "0 20px 20px",
+              padding: "20px 20px 20px",
               fontFamily: SANS,
               ...(modo === "leitura"
                 ? { flex: 1, minHeight: 0, boxSizing: "border-box", display: "flex", flexDirection: "column" }
@@ -3239,17 +3239,18 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
 
             {modo === "leitura" ? (
               <>
-                <div style={{ flexShrink: 0, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px", marginBottom: "6px" }}>
-                  <div style={{ fontFamily: SERIF, fontSize: "18px", fontWeight: 700, color: COR.textoPrincipal, minWidth: 0 }}>
+                <div style={{ flexShrink: 0, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px", marginBottom: "14px" }}>
+                  <div style={{ fontFamily: SERIF, fontSize: "20px", fontWeight: 700, lineHeight: 1.3, color: COR.textoPrincipal, minWidth: 0 }}>
                     {resenhaSelecionada.livroTitulo}
                   </div>
                   <span style={{ flexShrink: 0, fontSize: "10.5px", padding: "3px 9px", borderRadius: "20px", background: resenhaSelecionada.publica ? COR.melClaro : COR.saugeClaro, color: resenhaSelecionada.publica ? COR.melEscuro : COR.saugeEscuro }}>
                     {resenhaSelecionada.publica ? "Pública" : "Privada"}
                   </span>
                 </div>
-                <div style={{ flexShrink: 0, marginBottom: "10px" }}>
+                <div style={{ flexShrink: 0, marginBottom: "24px" }}>
                   <Estrelas valor={resenhaSelecionada.nota} tamanho={16} />
                 </div>
+                <div style={{ flexShrink: 0, fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.1em", textTransform: "uppercase", color: COR.melEscuro, marginBottom: "7px" }}>Sua opinião</div>
                 <div
                   style={{
                     flex: 1,
@@ -3675,8 +3676,8 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
         setObraExpandidaLeitura(null);
       }
     }
-    document.addEventListener("mousedown", aoClicarFora);
-    return () => document.removeEventListener("mousedown", aoClicarFora);
+    document.addEventListener("pointerdown", aoClicarFora);
+    return () => document.removeEventListener("pointerdown", aoClicarFora);
   }, [obraExpandidaLeitura]);
   const [ultimoCapituloSalvoId, setUltimoCapituloSalvoId] = useState(null);
   const [mostrarMarcadorDiscreto, setMostrarMarcadorDiscreto] = useState(false);
