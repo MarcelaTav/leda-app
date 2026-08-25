@@ -3230,7 +3230,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           >
           <div
             style={{
-              padding: "20px 20px 20px",
+              padding: "13px 20px 18px",
               fontFamily: SANS,
               flex: 1,
               minHeight: 0,
@@ -3256,12 +3256,11 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 <div style={{ flexShrink: 0, fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.1em", textTransform: "uppercase", color: COR.melEscuro, marginBottom: "7px" }}>Sua opinião</div>
                 <div
                   style={{
-                    flex: 1,
-                    minHeight: "140px",
-                    maxHeight: "300px",
+                    flexShrink: 0,
+                    height: "200px",
                     fontSize: "15px",
                     color: COR.textoPrincipal,
-                    lineHeight: 1.75,
+                    lineHeight: "26px",
                     whiteSpace: "pre-wrap",
                     overflowY: "auto", overflowX: "hidden",
                     background: COR.cartao,
@@ -3286,15 +3285,15 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                         flexShrink: 0,
                         fontSize: "14px",
                         color: COR.textoPrincipal,
-                        lineHeight: 1.7,
+                        lineHeight: "24px",
                         whiteSpace: "pre-wrap",
                         padding: "14px 16px",
                         background: COR.melClaro,
                         border: `1.5px solid ${COR.mel}55`,
                         borderRadius: "12px",
                         marginBottom: "18px",
-                        minHeight: "150px",
-                        maxHeight: "230px",
+                        minHeight: "136px",
+                        maxHeight: "208px",
                         overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
                       }}
@@ -3334,8 +3333,8 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   <input type="range" min="0" max="5" step="0.25" value={nota} onChange={(e) => setNota(parseFloat(e.target.value))} style={{ boxSizing: "border-box", width: "100%" }} />
                 </div>
 
-                <div style={{ flex: 1.4, minHeight: "90px", display: "flex", flexDirection: "column" }}>
-                  <div style={{ flexShrink: 0, fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>Sua resenha</div>
+                <div style={{ flex: 1.5, minHeight: "90px", marginTop: "2px", display: "flex", flexDirection: "column" }}>
+                  <div style={{ flexShrink: 0, fontSize: "12px", color: COR.textoSecundario, marginBottom: "7px" }}>Sua resenha</div>
                   <textarea
                     value={texto}
                     onChange={(e) => setTexto(e.target.value)}
@@ -3344,8 +3343,8 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   />
                 </div>
 
-                <div style={{ flex: 1, minHeight: "80px", marginTop: "6px", display: "flex", flexDirection: "column" }}>
-                  <div style={{ flexShrink: 0, fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>E sobre o autor, o que achou?</div>
+                <div style={{ flex: 0.85, minHeight: "72px", marginTop: "12px", display: "flex", flexDirection: "column" }}>
+                  <div style={{ flexShrink: 0, fontSize: "12px", color: COR.textoSecundario, marginBottom: "7px" }}>E sobre o autor, o que achou?</div>
                   <textarea
                     value={sobreAutor}
                     onChange={(e) => setSobreAutor(e.target.value)}
@@ -3386,21 +3385,20 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           {modo === "leitura" && (
             <div style={{ flexShrink: 0, padding: "14px 20px 18px", borderTop: `1px solid ${COR.linha}`, background: COR.fundo, fontFamily: SANS }}>
               {!confirmandoRemocaoResenha ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
                   <button
                     onClick={() => setConfirmandoRemocaoResenha(true)}
-                    style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 14px", borderRadius: "20px", border: `1px solid ${COR.alerta}55`, background: "transparent", color: COR.alerta, cursor: "pointer" }}
+                    style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 15px", borderRadius: "20px", border: `1px solid ${COR.alerta}55`, background: "transparent", color: COR.alerta, cursor: "pointer" }}
                   >
                     Excluir
                   </button>
-                  <div style={{ flex: 1 }} />
                   <button
                     onClick={fecharTudo}
-                    style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 18px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}
+                    style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 15px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}
                   >
                     Voltar
                   </button>
-                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flexShrink: 0, fontSize: "13px", fontWeight: 600, padding: "10px 26px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
+                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "10px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
                     Editar
                   </button>
                 </div>
