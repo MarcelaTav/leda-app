@@ -147,9 +147,10 @@ function TelaAutenticacao() {
       style={{
         fontFamily: SERIF,
         background: `
-          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.52) 0%, rgba(224, 158, 148, 0) 62%),
-          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
-          radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
+          radial-gradient(ellipse 78% 40% at 50% 108%, rgba(95, 115, 85, 0.62) 0%, rgba(95, 115, 85, 0.16) 45%, rgba(124, 144, 112, 0) 72%),
+          radial-gradient(ellipse 62% 40% at 12% -8%, rgba(224, 158, 148, 0.50) 0%, rgba(224, 158, 148, 0) 60%),
+          radial-gradient(ellipse 55% 38% at 100% 18%, rgba(124, 144, 112, 0.34) 0%, rgba(124, 144, 112, 0) 62%),
+          radial-gradient(ellipse 92% 74% at 50% 42%, #FCF8F0 0%, ${COR.fundo} 72%)
         `,
         minHeight: "100%",
         height: "100%",
@@ -167,13 +168,13 @@ function TelaAutenticacao() {
         style={{
           width: "100%",
           maxWidth: "380px",
-          background: "rgba(255, 253, 248, 0.86)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-          border: `1px solid rgba(231, 223, 204, 0.7)`,
-          borderRadius: "24px",
+          background: "rgba(255, 253, 248, 0.90)",
+          backdropFilter: "blur(20px) saturate(1.15)",
+          WebkitBackdropFilter: "blur(20px) saturate(1.15)",
+          border: `1px solid rgba(124, 144, 112, 0.26)`,
+          borderRadius: "26px",
           padding: "30px 26px",
-          boxShadow: "0 2px 10px rgba(62, 58, 49, 0.05), 0 24px 56px rgba(62, 58, 49, 0.12)",
+          boxShadow: "0 1px 2px rgba(62, 58, 49, 0.04), 0 10px 24px rgba(62, 58, 49, 0.09), 0 30px 64px rgba(95, 115, 85, 0.20)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50px", height: "50px", borderRadius: "50%", background: `radial-gradient(circle at 35% 30%, #F3ECD9 0%, ${COR.saugeClaro} 75%)`, margin: "0 auto 18px", boxShadow: "0 4px 14px rgba(124, 144, 112, 0.22)" }}>
@@ -307,225 +308,4 @@ function TelaAutenticacao() {
           {modo === "criar" ? (
             <>
               Já tem conta?{" "}
-              <span
-                onClick={() => {
-                  setModo("entrar");
-                  limparMensagens();
-                }}
-                style={{ color: COR.saugeEscuro, textDecoration: "underline", cursor: "pointer" }}
-              >
-                Entrar
-              </span>
-            </>
-          ) : modo === "recuperar" ? (
-            <>
-              Lembrou a senha?{" "}
-              <span
-                onClick={() => {
-                  setModo("entrar");
-                  limparMensagens();
-                }}
-                style={{ color: COR.saugeEscuro, textDecoration: "underline", cursor: "pointer" }}
-              >
-                Entrar
-              </span>
-            </>
-          ) : (
-            <>
-              Ainda não tem conta?{" "}
-              <span
-                onClick={() => {
-                  setModo("criar");
-                  limparMensagens();
-                }}
-                style={{ color: COR.saugeEscuro, textDecoration: "underline", cursor: "pointer" }}
-              >
-                Criar conta
-              </span>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TelaNovaSenha() {
-  const [novaSenha, setNovaSenha] = useState("");
-  const [confirmar, setConfirmar] = useState("");
-  const [senhaVisivel, setSenhaVisivel] = useState(false);
-  const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState("");
-  const [mensagem, setMensagem] = useState("");
-
-  const estiloInput = {
-    width: "100%",
-    boxSizing: "border-box",
-    fontSize: "16px",
-    padding: "12px 14px",
-    paddingRight: "38px",
-    borderRadius: "10px",
-    border: `1.5px solid ${COR.linha}`,
-    fontFamily: SANS,
-    background: "#FDFBF6",
-    outline: "none",
-  };
-
-  async function salvar(e) {
-    e.preventDefault();
-    setErro("");
-    setMensagem("");
-    if (novaSenha.length < 6) {
-      setErro("A senha precisa ter pelo menos 6 caracteres.");
-      return;
-    }
-    if (novaSenha !== confirmar) {
-      setErro("As senhas não coincidem.");
-      return;
-    }
-    setCarregando(true);
-    try {
-      const { error } = await supabase.auth.updateUser({ password: novaSenha });
-      if (error) throw error;
-      setMensagem("Senha atualizada! Você já pode continuar usando o app.");
-    } catch (err) {
-      setErro(err && err.message ? err.message : "Algo deu errado, tenta de novo.");
-    } finally {
-      setCarregando(false);
-    }
-  }
-
-  return (
-    <div
-      style={{
-        fontFamily: SERIF,
-        background: `radial-gradient(circle at 50% 0%, #FBF7EC 0%, ${COR.fundo} 60%)`,
-        minHeight: "100%",
-        height: "100%",
-        overflowY: "auto",
-        WebkitOverflowScrolling: "touch",
-        color: COR.textoPrincipal,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "380px",
-          background: COR.cartao,
-          border: `1px solid ${COR.linha}`,
-          borderRadius: "22px",
-          padding: "36px 28px",
-          boxShadow: "0 2px 8px rgba(62, 58, 49, 0.04), 0 12px 32px rgba(62, 58, 49, 0.08)",
-        }}
-      >
-        <h1 style={{ fontSize: "23px", fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
-          Definir nova senha
-        </h1>
-        <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", marginBottom: "26px" }}>
-          Escolha uma nova senha pra sua conta.
-        </div>
-
-        <form onSubmit={salvar} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-          <div>
-            <div style={{ fontFamily: SANS, fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "5px" }}>Nova senha</div>
-            <div style={{ position: "relative" }}>
-              <input
-                type={senhaVisivel ? "text" : "password"}
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-                placeholder="pelo menos 6 caracteres"
-                autoComplete="new-password"
-                style={estiloInput}
-              />
-              <OlhoSenha visivel={senhaVisivel} onClick={() => setSenhaVisivel((v) => !v)} />
-            </div>
-          </div>
-          <div>
-            <div style={{ fontFamily: SANS, fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "5px" }}>Confirmar senha</div>
-            <div style={{ position: "relative" }}>
-              <input
-                type={senhaVisivel ? "text" : "password"}
-                value={confirmar}
-                onChange={(e) => setConfirmar(e.target.value)}
-                placeholder="repita a nova senha"
-                autoComplete="new-password"
-                style={estiloInput}
-              />
-            </div>
-          </div>
-
-          {erro && <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.alerta }}>{erro}</div>}
-          {mensagem && <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.saugeEscuro }}>{mensagem}</div>}
-
-          <button
-            type="submit"
-            disabled={carregando}
-            style={{
-              fontFamily: SANS,
-              fontSize: "13.5px",
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-              padding: "13px",
-              boxShadow: carregando ? "none" : "0 6px 16px rgba(124, 144, 112, 0.32)",
-              borderRadius: "10px",
-              border: "none",
-              background: COR.sauge,
-              color: "#FFFFFF",
-              cursor: carregando ? "default" : "pointer",
-              opacity: carregando ? 0.7 : 1,
-              marginTop: "4px",
-            }}
-          >
-            {carregando ? "Um instante…" : "Salvar nova senha"}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-export default function Root() {
-  const [sessao, setSessao] = useState(undefined); // undefined = ainda carregando
-  const [recuperandoSenha, setRecuperandoSenha] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSessao(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((evento, novaSessao) => {
-      if (evento === "PASSWORD_RECOVERY") {
-        setRecuperandoSenha(true);
-      }
-      setSessao(novaSessao);
-    });
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-  if (sessao === undefined) {
-    return (
-      <div style={{ fontFamily: SANS, background: COR.fundo, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
-        Carregando…
-      </div>
-    );
-  }
-
-  if (recuperandoSenha) {
-    return <TelaNovaSenha />;
-  }
-
-  if (!sessao) {
-    return <TelaAutenticacao />;
-  }
-
-  return (
-    <AppLeitura
-      userId={sessao.user.id}
-      userEmail={sessao.user.email}
-      userName={sessao.user.user_metadata?.nome || ""}
-      onSignOut={() => supabase.auth.signOut()}
-    />
-  );
-}
+              
