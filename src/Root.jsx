@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import AppLeitura from "./AppLeitura";
 
@@ -48,6 +48,36 @@ function TelaAutenticacao() {
   const [focoNome, setFocoNome] = useState(false);
   const [focoEmail, setFocoEmail] = useState(false);
   const [focoSenha, setFocoSenha] = useState(false);
+
+  // Quando o teclado abre, a área visível encolhe. Aqui o cartão é reduzido
+  // na medida exata pra caber inteiro nesse espaço — e como ele fica
+  // centralizado, não precisa rolar nem se mexer depois de ajustado.
+  const cartaoRef = useRef(null);
+  const [alturaVisivel, setAlturaVisivel] = useState(null);
+  const [alturaCartao, setAlturaCartao] = useState(0);
+
+  useEffect(() => {
+    function medir() {
+      if (window.visualViewport) setAlturaVisivel(window.visualViewport.height);
+      if (cartaoRef.current) setAlturaCartao(cartaoRef.current.offsetHeight);
+    }
+    medir();
+    const t = setTimeout(medir, 350);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", medir);
+    }
+    window.addEventListener("resize", medir);
+    return () => {
+      clearTimeout(t);
+      if (window.visualViewport) window.visualViewport.removeEventListener("resize", medir);
+      window.removeEventListener("resize", medir);
+    };
+  }, [modo, erro, mensagem]);
+
+  const escala =
+    alturaVisivel && alturaCartao
+      ? Math.min(1, (alturaVisivel - 24) / alturaCartao)
+      : 1;
 
   const estiloInput = (focado) => ({
     width: "100%",
@@ -154,22 +184,25 @@ function TelaAutenticacao() {
           radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
-        minHeight: "100%",
-        height: "100%",
-        overflowY: "auto",
+        minHeight: alturaVisivel ? `${alturaVisivel}px` : "100%",
+        height: alturaVisivel ? `${alturaVisivel}px` : "100%",
+        overflow: "hidden",
         overscrollBehavior: "contain",
-        WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
         display: "flex",
-        padding: "20px",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "12px",
         boxSizing: "border-box",
       }}
     >
       <div
+        ref={cartaoRef}
         style={{
           width: "100%",
           maxWidth: "380px",
-          margin: "auto",
+          transform: escala < 1 ? `scale(${escala})` : "none",
+          transformOrigin: "center center",
           background: "rgba(255, 253, 248, 0.88)",
           backdropFilter: "blur(20px) saturate(1.08)",
           WebkitBackdropFilter: "blur(20px) saturate(1.08)",
