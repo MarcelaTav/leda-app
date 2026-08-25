@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 import AppLeitura from "./AppLeitura";
 
@@ -48,53 +48,6 @@ function TelaAutenticacao() {
   const [focoNome, setFocoNome] = useState(false);
   const [focoEmail, setFocoEmail] = useState(false);
   const [focoSenha, setFocoSenha] = useState(false);
-
-  // --- comportamento da tela com o teclado aberto ---
-  // 1) a tela passa a ter exatamente a altura visível (sem o espaço fantasma
-  //    que o teclado deixava embaixo);
-  // 2) ao tocar num campo, ela rola sozinha pra deixar a área de escrita à
-  //    mostra e trava nessa posição enquanto a pessoa digita.
-  const areaRef = useRef(null);
-  const [alturaVisivel, setAlturaVisivel] = useState(null);
-  const [travada, setTravada] = useState(false);
-
-  useEffect(() => {
-    function ajustarAltura() {
-      if (window.visualViewport) {
-        setAlturaVisivel(window.visualViewport.height);
-      }
-    }
-    ajustarAltura();
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", ajustarAltura);
-      return () => window.visualViewport.removeEventListener("resize", ajustarAltura);
-    }
-  }, []);
-
-  function aoFocar(campo) {
-    if (campo === "nome") setFocoNome(true);
-    if (campo === "email") setFocoEmail(true);
-    if (campo === "senha") setFocoSenha(true);
-    setTravada(true);
-    // espera o teclado terminar de abrir antes de posicionar
-    setTimeout(() => {
-      const area = areaRef.current;
-      if (area) {
-        area.scrollTop = area.scrollHeight - area.clientHeight;
-      }
-    }, 320);
-  }
-
-  function aoDesfocar(campo) {
-    if (campo === "nome") setFocoNome(false);
-    if (campo === "email") setFocoEmail(false);
-    if (campo === "senha") setFocoSenha(false);
-    setTravada(false);
-    setTimeout(() => {
-      const area = areaRef.current;
-      if (area) area.scrollTop = 0;
-    }, 120);
-  }
 
   const estiloInput = (focado) => ({
     width: "100%",
@@ -194,7 +147,6 @@ function TelaAutenticacao() {
 
   return (
     <div
-      ref={areaRef}
       style={{
         fontFamily: SERIF,
         background: `
@@ -202,9 +154,9 @@ function TelaAutenticacao() {
           radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
-        minHeight: alturaVisivel ? `${alturaVisivel}px` : "100%",
-        height: alturaVisivel ? `${alturaVisivel}px` : "100%",
-        overflowY: travada ? "hidden" : "auto",
+        minHeight: "100%",
+        height: "100%",
+        overflowY: "auto",
         overscrollBehavior: "contain",
         WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
@@ -271,8 +223,8 @@ function TelaAutenticacao() {
                 type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                onFocus={() => aoFocar("nome")}
-                onBlur={() => aoDesfocar("nome")}
+                onFocus={() => setFocoNome(true)}
+                onBlur={() => setFocoNome(false)}
                 placeholder="Como podemos te chamar?"
                 autoComplete="name"
                 style={estiloInput(focoNome)}
@@ -285,8 +237,8 @@ function TelaAutenticacao() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => aoFocar("email")}
-              onBlur={() => aoDesfocar("email")}
+              onFocus={() => setFocoEmail(true)}
+              onBlur={() => setFocoEmail(false)}
               placeholder="voce@exemplo.com"
               autoComplete="email"
               style={estiloInput(focoEmail)}
@@ -301,8 +253,8 @@ function TelaAutenticacao() {
                   type={senhaVisivel ? "text" : "password"}
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  onFocus={() => aoFocar("senha")}
-                  onBlur={() => aoDesfocar("senha")}
+                  onFocus={() => setFocoSenha(true)}
+                  onBlur={() => setFocoSenha(false)}
                   placeholder="pelo menos 6 caracteres"
                   autoComplete={modo === "criar" ? "new-password" : "current-password"}
                   style={{ ...estiloInput(focoSenha), paddingRight: "38px" }}
