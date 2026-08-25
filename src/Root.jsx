@@ -53,13 +53,16 @@ function TelaAutenticacao() {
     width: "100%",
     boxSizing: "border-box",
     fontSize: "16px",
-    padding: "9px 13px",
-    borderRadius: "10px",
-    border: `1.5px solid ${focado ? COR.sauge : COR.linha}`,
+    padding: "10px 13px",
+    borderRadius: "11px",
+    border: `1.5px solid ${focado ? COR.sauge : "rgba(199, 189, 166, 0.85)"}`,
     fontFamily: SANS,
-    background: focado ? "#FFFFFF" : "#FDFBF6",
+    background: focado ? "#FFFFFF" : "rgba(253, 251, 246, 0.9)",
+    boxShadow: focado
+      ? `inset 0 1px 2px rgba(62, 58, 49, 0.05), 0 0 0 3px rgba(124, 144, 112, 0.14)`
+      : "inset 0 1px 2px rgba(62, 58, 49, 0.045)",
     outline: "none",
-    transition: "border-color 0.15s ease, background 0.15s ease",
+    transition: "border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease",
   });
 
   function limparMensagens() {
@@ -154,11 +157,10 @@ function TelaAutenticacao() {
         minHeight: "100%",
         height: "100%",
         overflowY: "auto",
+        overscrollBehavior: "contain",
         WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         padding: "20px",
         boxSizing: "border-box",
       }}
@@ -167,13 +169,20 @@ function TelaAutenticacao() {
         style={{
           width: "100%",
           maxWidth: "380px",
+          margin: "auto",
           background: "rgba(255, 253, 248, 0.88)",
           backdropFilter: "blur(20px) saturate(1.08)",
           WebkitBackdropFilter: "blur(20px) saturate(1.08)",
-          border: `1px solid rgba(231, 223, 204, 0.75)`,
+          border: `1px solid rgba(231, 223, 204, 0.9)`,
           borderRadius: "24px",
           padding: "30px 26px",
-          boxShadow: "0 2px 10px rgba(62, 58, 49, 0.05), 0 26px 60px rgba(62, 58, 49, 0.14)",
+          boxShadow: [
+            "inset 0 1px 0 rgba(255, 255, 255, 0.95)",
+            "inset 0 0 0 1px rgba(255, 255, 255, 0.45)",
+            "0 0 0 1px rgba(124, 144, 112, 0.07)",
+            "0 2px 6px rgba(62, 58, 49, 0.05)",
+            "0 26px 60px rgba(62, 58, 49, 0.14)",
+          ].join(", "),
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50px", height: "50px", borderRadius: "50%", background: `radial-gradient(circle at 35% 30%, #F3ECD9 0%, ${COR.saugeClaro} 75%)`, margin: "0 auto 18px", boxShadow: "0 4px 14px rgba(124, 144, 112, 0.22)" }}>
@@ -403,11 +412,10 @@ function TelaNovaSenha() {
         minHeight: "100%",
         height: "100%",
         overflowY: "auto",
+        overscrollBehavior: "contain",
         WebkitOverflowScrolling: "touch",
         color: COR.textoPrincipal,
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         padding: "20px",
         boxSizing: "border-box",
       }}
@@ -416,6 +424,7 @@ function TelaNovaSenha() {
         style={{
           width: "100%",
           maxWidth: "380px",
+          margin: "auto",
           background: COR.cartao,
           border: `1px solid ${COR.linha}`,
           borderRadius: "22px",
@@ -495,4 +504,37 @@ export default function Root() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSessao(data.session));
-    const { data: listener } = supabase.auth.
+    const { data: listener } = supabase.auth.onAuthStateChange((evento, novaSessao) => {
+      if (evento === "PASSWORD_RECOVERY") {
+        setRecuperandoSenha(true);
+      }
+      setSessao(novaSessao);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  if (sessao === undefined) {
+    return (
+      <div style={{ fontFamily: SANS, background: COR.fundo, height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: COR.textoSecundario, fontSize: "13px" }}>
+        Carregando…
+      </div>
+    );
+  }
+
+  if (recuperandoSenha) {
+    return <TelaNovaSenha />;
+  }
+
+  if (!sessao) {
+    return <TelaAutenticacao />;
+  }
+
+  return (
+    <AppLeitura
+      userId={sessao.user.id}
+      userEmail={sessao.user.email}
+      userName={sessao.user.user_metadata?.nome || ""}
+      onSignOut={() => supabase.auth.signOut()}
+    />
+  );
+}
