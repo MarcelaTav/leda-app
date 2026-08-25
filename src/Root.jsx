@@ -49,6 +49,23 @@ function TelaAutenticacao() {
   const [focoEmail, setFocoEmail] = useState(false);
   const [focoSenha, setFocoSenha] = useState(false);
 
+  // acompanha a altura real visível da tela (exclui a área coberta pelo
+  // teclado). Sem isso, a tela mantinha a altura cheia mesmo com o teclado
+  // aberto, sobrando um espaço vazio embaixo que dava pra rolar até ele.
+  const [alturaVisivel, setAlturaVisivel] = useState(null);
+  useEffect(() => {
+    function ajustarAltura() {
+      if (window.visualViewport) {
+        setAlturaVisivel(window.visualViewport.height);
+      }
+    }
+    ajustarAltura();
+    window.visualViewport && window.visualViewport.addEventListener("resize", ajustarAltura);
+    return () => {
+      window.visualViewport && window.visualViewport.removeEventListener("resize", ajustarAltura);
+    };
+  }, []);
+
   const estiloInput = (focado) => ({
     width: "100%",
     boxSizing: "border-box",
@@ -150,12 +167,12 @@ function TelaAutenticacao() {
       style={{
         fontFamily: SERIF,
         background: `
-          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.58) 0%, rgba(224, 158, 148, 0) 62%),
-          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.48) 0%, rgba(124, 144, 112, 0) 62%),
+          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.22) 0%, rgba(224, 158, 148, 0) 60%),
+          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
-        minHeight: "100%",
-        height: "100%",
+        minHeight: alturaVisivel ? `${alturaVisivel}px` : "100%",
+        height: alturaVisivel ? `${alturaVisivel}px` : "100%",
         overflowY: "auto",
         overscrollBehavior: "contain",
         WebkitOverflowScrolling: "touch",
