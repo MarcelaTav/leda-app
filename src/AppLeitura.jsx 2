@@ -308,14 +308,35 @@ function usarListaPersistida(chave, userId) {
   const [statusSalvamento, setStatusSalvamento] = useState("ok"); // ok | pendente
   const dadosRef = useRef(dados);
   dadosRef.current = dados;
+  const loadedRef = useRef(loaded);
+  loadedRef.current = loaded;
   const pendenteRef = useRef(null);
   const sincronizandoRef = useRef(false);
 
   useEffect(() => {
     if (!userId) return;
     let cancelado = false;
-    (async () => {
+    let timer = null;
+
+    // Carregamento com novas tentativas. Dois perigos são tratados aqui:
+    // 1) a consulta falhar (rede oscilando) — tenta de novo;
+    // 2) a consulta "dar certo" e voltar vazia porque a sessão de login ainda
+    //    estava sendo renovada — nesse caso o banco não reconhece quem pergunta
+    //    e responde "nenhum registro", sem erro. Por isso resposta vazia é
+    //    reconfirmada algumas vezes antes de ser aceita como verdade.
+    // Enquanto não houver leitura confiável, "loaded" continua falso: a tela
+    // segue mostrando "Carregando…" e a gravação fica bloqueada.
+    const CONFIRMACOES_VAZIO = 2;
+
+    async function tentarCarregar(tentativa, vaziosSeguidos) {
       try {
+        // garante que a sessão está de fato válida antes de perguntar ao banco
+        const { data: sessaoAtual } = await supabase.auth.getSession();
+        if (cancelado) return;
+        if (!sessaoAtual || !sessaoAtual.session) {
+          throw new Error("sessao ainda nao disponivel");
+        }
+
         const { data, error } = await supabase
           .from("app_dados")
           .select("valor")
@@ -323,17 +344,37 @@ function usarListaPersistida(chave, userId) {
           .eq("chave", chave)
           .maybeSingle();
         if (error) throw error;
-        if (!cancelado && data && Array.isArray(data.valor)) {
+        if (cancelado) return;
+
+        if (data && Array.isArray(data.valor)) {
           setDados(data.valor);
+          setLoaded(true);
+          return;
         }
+
+        // veio vazio: pode ser primeira vez usando (correto) ou sessão que
+        // ainda não valeu (falso vazio). Confirma antes de aceitar.
+        if (vaziosSeguidos + 1 >= CONFIRMACOES_VAZIO) {
+          setLoaded(true);
+          return;
+        }
+        timer = setTimeout(() => {
+          if (!cancelado) tentarCarregar(tentativa, vaziosSeguidos + 1);
+        }, 600);
       } catch (e) {
-        // primeira vez usando o app: a chave ainda não existe, é normal
-      } finally {
-        if (!cancelado) setLoaded(true);
+        if (cancelado) return;
+        const espera = Math.min(800 * Math.pow(2, tentativa), 8000);
+        timer = setTimeout(() => {
+          if (!cancelado) tentarCarregar(tentativa + 1, vaziosSeguidos);
+        }, espera);
       }
-    })();
+    }
+
+    tentarCarregar(0, 0);
+
     return () => {
       cancelado = true;
+      if (timer) clearTimeout(timer);
     };
   }, [chave, userId]);
 
@@ -363,6 +404,10 @@ function usarListaPersistida(chave, userId) {
   }
 
   function salvar(novaLista) {
+    // trava de segurança: enquanto os dados reais não tiverem sido lidos do
+    // banco, gravar significaria apagar o que existe lá. Nesse caso a lista
+    // ainda aparece como "Carregando…", então não há edição legítima em curso.
+    if (!loadedRef.current) return;
     setDados(novaLista);
     pendenteRef.current = novaLista;
     garantirSincronizacao();
@@ -378,6 +423,8 @@ function usarValorPersistido(chave, valorInicial, userId) {
   const [valor, setValor] = useState(valorInicial);
   const [loaded, setLoaded] = useState(false);
   const [statusSalvamento, setStatusSalvamento] = useState("ok");
+  const loadedRef = useRef(loaded);
+  loadedRef.current = loaded;
   const pendenteRef = useRef(false);
   const valorPendenteRef = useRef(valorInicial);
   const sincronizandoRef = useRef(false);
@@ -385,8 +432,20 @@ function usarValorPersistido(chave, valorInicial, userId) {
   useEffect(() => {
     if (!userId) return;
     let cancelado = false;
-    (async () => {
+    let timer = null;
+
+    // mesma proteção do hook de lista, incluindo a reconfirmação de resposta
+    // vazia (que pode significar apenas que a sessão ainda não valia)
+    const CONFIRMACOES_VAZIO = 2;
+
+    async function tentarCarregar(tentativa, vaziosSeguidos) {
       try {
+        const { data: sessaoAtual } = await supabase.auth.getSession();
+        if (cancelado) return;
+        if (!sessaoAtual || !sessaoAtual.session) {
+          throw new Error("sessao ainda nao disponivel");
+        }
+
         const { data, error } = await supabase
           .from("app_dados")
           .select("valor")
@@ -394,17 +453,35 @@ function usarValorPersistido(chave, valorInicial, userId) {
           .eq("chave", chave)
           .maybeSingle();
         if (error) throw error;
-        if (!cancelado && data && data.valor !== undefined) {
+        if (cancelado) return;
+
+        if (data && data.valor !== undefined) {
           setValor(data.valor);
+          setLoaded(true);
+          return;
         }
+
+        if (vaziosSeguidos + 1 >= CONFIRMACOES_VAZIO) {
+          setLoaded(true);
+          return;
+        }
+        timer = setTimeout(() => {
+          if (!cancelado) tentarCarregar(tentativa, vaziosSeguidos + 1);
+        }, 600);
       } catch (e) {
-        // primeira vez usando: a chave ainda não existe, é normal
-      } finally {
-        if (!cancelado) setLoaded(true);
+        if (cancelado) return;
+        const espera = Math.min(800 * Math.pow(2, tentativa), 8000);
+        timer = setTimeout(() => {
+          if (!cancelado) tentarCarregar(tentativa + 1, vaziosSeguidos);
+        }, espera);
       }
-    })();
+    }
+
+    tentarCarregar(0, 0);
+
     return () => {
       cancelado = true;
+      if (timer) clearTimeout(timer);
     };
   }, [chave, userId]);
 
@@ -434,6 +511,8 @@ function usarValorPersistido(chave, valorInicial, userId) {
   }
 
   function salvar(novoValor) {
+    // mesma trava do hook de lista
+    if (!loadedRef.current) return;
     setValor(novoValor);
     valorPendenteRef.current = novoValor;
     pendenteRef.current = true;
@@ -3117,7 +3196,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
   const modalAberto = (modo === "leitura" || modo === "edicao") && resenhaSelecionada;
 
   const alturaCaixaTexto = "230px";
-  const alturaCaixaAutor = "130px";
+  const alturaCaixaAutor = "185px";
 
   // leitura e edição de uma resenha já existente — tela cheia própria (não
   // mais um modal com position:fixed), pra ocupar o mesmo espaço das outras
@@ -3137,13 +3216,23 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             </div>
           </div>
 
-          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>
+          <div
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: "auto",
+              overflowX: "hidden",
+              overscrollBehavior: "contain",
+              WebkitOverflowScrolling: "touch",
+              ...(modo === "leitura" ? { display: "flex", flexDirection: "column" } : {}),
+            }}
+          >
           <div
             style={{
               padding: "0 20px 20px",
               fontFamily: SANS,
               ...(modo === "leitura"
-                ? { height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }
+                ? { flex: 1, minHeight: 0, boxSizing: "border-box", display: "flex", flexDirection: "column" }
                 : {}),
             }}
           >
@@ -3164,7 +3253,8 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 <div
                   style={{
                     flex: 1,
-                    minHeight: "160px",
+                    minHeight: "140px",
+                    maxHeight: "300px",
                     fontSize: "15px",
                     color: COR.textoPrincipal,
                     lineHeight: 1.75,
@@ -3199,7 +3289,8 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                         border: `1.5px solid ${COR.mel}55`,
                         borderRadius: "12px",
                         marginBottom: "18px",
-                        maxHeight: alturaCaixaAutor,
+                        minHeight: "150px",
+                        maxHeight: "230px",
                         overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
                       }}
@@ -3249,7 +3340,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   />
                 </div>
 
-                <div>
+                <div style={{ marginTop: "6px" }}>
                   <div style={{ fontSize: "12px", color: COR.textoSecundario, marginBottom: "6px" }}>E sobre o autor, o que achou?</div>
                   <textarea
                     value={sobreAutor}
@@ -3259,7 +3350,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   />
                 </div>
 
-                <div onClick={() => setPublica(!publica)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "10px", background: publica ? COR.melClaro : COR.saugeClaro, cursor: "pointer" }}>
+                <div onClick={() => setPublica(!publica)} style={{ marginTop: "6px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 12px", borderRadius: "10px", background: publica ? COR.melClaro : COR.saugeClaro, cursor: "pointer" }}>
                   <div>
                     <div style={{ fontSize: "13px", fontWeight: 600, color: publica ? COR.melEscuro : COR.saugeEscuro }}>
                       {publica ? "Publicar essa resenha" : "Manter privada"}
@@ -3275,11 +3366,11 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
 
                 {erroForm && <div style={{ fontSize: "12.5px", color: COR.alerta }}>{erroForm}</div>}
 
-                <div style={{ display: "flex", gap: "8px", marginTop: "2px" }}>
-                  <button type="button" onClick={() => abrirLeitura(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", padding: "9px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}>
+                <div style={{ display: "flex", gap: "10px", marginTop: "22px", marginBottom: "6px" }}>
+                  <button type="button" onClick={() => abrirLeitura(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", padding: "11px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}>
                     Cancelar
                   </button>
-                  <button type="submit" style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "9px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer" }}>
+                  <button type="submit" style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "11px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
                     Salvar
                   </button>
                 </div>
@@ -3289,7 +3380,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
           </div>
 
           {modo === "leitura" && (
-            <div style={{ flexShrink: 0, padding: "12px 20px", borderTop: `1px solid ${COR.linha}`, background: COR.fundo, fontFamily: SANS }}>
+            <div style={{ flexShrink: 0, padding: "14px 20px 18px", borderTop: `1px solid ${COR.linha}`, background: COR.fundo, fontFamily: SANS }}>
               {!confirmandoRemocaoResenha ? (
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button
@@ -3298,7 +3389,13 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                   >
                     Excluir
                   </button>
-                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "10px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer" }}>
+                  <button
+                    onClick={fecharTudo}
+                    style={{ fontSize: "12.5px", padding: "10px 14px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}
+                  >
+                    Voltar
+                  </button>
+                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "10px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
                     Editar
                   </button>
                 </div>
@@ -4445,52 +4542,81 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
   if (vista === "leituraCapitulo" && capituloSelecionado) {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <div style={{ flexShrink: 0, padding: "16px 20px", borderBottom: `1px solid ${COR.linha}` }}>
+        <div style={{ flexShrink: 0, padding: "16px 20px 0", borderBottom: `1px solid ${COR.linha}` }}>
           <button
             onClick={() => setVista("lista")}
             style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, background: "transparent", border: "none", padding: 0, cursor: "pointer" }}
           >
             ← {obraSelecionada.titulo}
           </button>
+
+          {/* faixa fixa: identidade da obra sempre visível durante a leitura */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              padding: "10px 0 12px",
+              marginTop: "10px",
+              borderTop: `1px solid ${corBase}22`,
+            }}
+          >
+            <span style={{ width: "18px", height: "1px", background: `${corBase}66`, flexShrink: 0 }} />
+            <span style={{ fontFamily: SERIF, fontSize: "14.5px", fontWeight: 700, color: COR.textoPrincipal, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {obraSelecionada.titulo}
+            </span>
+            {obraSelecionada.genero && (
+              <span style={{ flexShrink: 0, fontFamily: SANS, fontSize: "9.5px", fontWeight: 600, letterSpacing: "0.04em", padding: "2px 10px", borderRadius: "20px", border: `1px solid ${corBase}`, color: corEscura }}>
+                {obraSelecionada.genero}
+              </span>
+            )}
+            <span style={{ width: "18px", height: "1px", background: `${corBase}66`, flexShrink: 0 }} />
+          </div>
         </div>
 
         {/* área de leitura — ocupa todo o espaço disponível, como a página de um livro */}
-        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", background: `linear-gradient(180deg, ${corClara}55, ${COR.fundo} 140px)` }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch", background: `linear-gradient(180deg, ${corClara}55, ${COR.fundo} 140px)` }}>
           <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px 20px 40px" }}>
-            <div
-              style={{
-                padding: "22px 20px",
-                borderRadius: "18px",
-                background: `linear-gradient(160deg, ${corClara}, ${COR.cartao} 65%)`,
-                border: `1px solid ${corBase}30`,
-                boxShadow: `0 6px 20px rgba(62,58,49,0.10), 0 0 0 1px ${corBase}0D`,
-                textAlign: "center",
-                position: "relative",
-                overflow: "hidden",
-                marginBottom: "24px",
-              }}
-            >
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "5px", background: corBase }} />
-              <div style={{ fontFamily: SANS, fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: corEscura, marginBottom: "8px", opacity: 0.85, fontWeight: 600 }}>
-                📖 Leitura
-              </div>
-              <div style={{ fontSize: "17px", fontWeight: 700, margin: "0 0 8px", fontFamily: SERIF, color: COR.textoPrincipal, lineHeight: 1.3 }}>
-                {obraSelecionada.titulo}
-              </div>
-              {obraSelecionada.genero && (
-                <span style={{ display: "inline-block", fontFamily: SANS, fontSize: "10px", fontWeight: 600, padding: "3px 12px", borderRadius: "20px", border: `1px solid ${corBase}`, color: corEscura, marginBottom: obraSelecionada.sinopse ? "10px" : 0 }}>
-                  {obraSelecionada.genero}
-                </span>
-              )}
-              {obraSelecionada.sinopse && (
-                <div style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: "12px", color: COR.textoSecundario, lineHeight: 1.5, padding: "0 4px" }}>
-                  {obraSelecionada.sinopse}
-                </div>
-              )}
-              {(obraSelecionada.marcadorIds || []).length > 0 && (
-                <>
-                  <div style={{ fontFamily: SANS, fontSize: "10px", color: corEscura, opacity: 0.5, margin: "12px 0 8px" }}>· · ·</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "center" }}>
+            {(obraSelecionada.sinopse || (obraSelecionada.marcadorIds || []).length > 0) && (
+              <div style={{ marginBottom: "30px" }}>
+                {obraSelecionada.sinopse && (
+                  <div style={{ position: "relative", padding: "6px 10px 0" }}>
+                    <div
+                      style={{
+                        fontFamily: SERIF,
+                        fontSize: "30px",
+                        lineHeight: 1,
+                        color: `${corBase}55`,
+                        textAlign: "center",
+                        marginBottom: "2px",
+                        userSelect: "none",
+                      }}
+                    >
+                      “
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: SERIF,
+                        fontStyle: "italic",
+                        fontSize: "14.5px",
+                        color: COR.textoSecundario,
+                        lineHeight: 1.75,
+                        textAlign: "center",
+                        padding: "0 6px",
+                      }}
+                    >
+                      {obraSelecionada.sinopse}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "18px" }}>
+                      <span style={{ width: "34px", height: "1px", background: `${corBase}40` }} />
+                      <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: `${corBase}70` }} />
+                      <span style={{ width: "34px", height: "1px", background: `${corBase}40` }} />
+                    </div>
+                  </div>
+                )}
+                {(obraSelecionada.marcadorIds || []).length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "center", marginTop: obraSelecionada.sinopse ? "16px" : 0 }}>
                     {(obraSelecionada.marcadorIds || []).map((mid) => {
                       const m = marcadores.find((mm) => mm.id === mid);
                       if (!m) return null;
@@ -4501,9 +4627,9 @@ function TelaEscritos({ estado, pendente, corPersonalizada, onMudarCor, marcador
                       );
                     })}
                   </div>
-                </>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {numeroDoCapituloSelecionado && (
               <div style={{ fontFamily: SANS, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", color: corEscura, textAlign: "center", marginBottom: "8px" }}>
