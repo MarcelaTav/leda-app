@@ -56,22 +56,44 @@ function TelaAutenticacao() {
   const [alturaVisivel, setAlturaVisivel] = useState(null);
   const [alturaCartao, setAlturaCartao] = useState(0);
 
+  // A página é travada com altura fixa no index.html. No iPhone essa altura
+  // NÃO encolhe quando o teclado abre, então o Safari rola a página travada
+  // pra mostrar o campo — é isso que empurra o cartão pra cima e deixa o
+  // vazio embaixo. Aqui a altura da página acompanha a área realmente
+  // visível, e qualquer rolagem que o Safari tente aplicar é desfeita.
+  // Vale só enquanto a tela de login está aberta: ao sair, tudo volta ao
+  // normal, pra não afetar as abas do app.
   useEffect(() => {
-    function medir() {
-      if (window.visualViewport) setAlturaVisivel(window.visualViewport.height);
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const raiz = document.documentElement;
+    const corpo = document.body;
+
+    function ajustar() {
+      const h = vv.height;
+      setAlturaVisivel(h);
+      raiz.style.height = h + "px";
+      corpo.style.height = h + "px";
+      if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
       if (cartaoRef.current) setAlturaCartao(cartaoRef.current.offsetHeight);
     }
-    medir();
-    const t = setTimeout(medir, 350);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", medir);
-    }
-    window.addEventListener("resize", medir);
+
+    ajustar();
+    const t = setTimeout(ajustar, 350);
+    vv.addEventListener("resize", ajustar);
+    vv.addEventListener("scroll", ajustar);
     return () => {
       clearTimeout(t);
-      if (window.visualViewport) window.visualViewport.removeEventListener("resize", medir);
-      window.removeEventListener("resize", medir);
+      vv.removeEventListener("resize", ajustar);
+      vv.removeEventListener("scroll", ajustar);
+      raiz.style.height = "";
+      corpo.style.height = "";
     };
+  }, []);
+
+  // remede o cartão quando ele muda de tamanho (trocar de modo, mostrar erro)
+  useEffect(() => {
+    if (cartaoRef.current) setAlturaCartao(cartaoRef.current.offsetHeight);
   }, [modo, erro, mensagem]);
 
   const escala =
