@@ -3257,7 +3257,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                 <div
                   style={{
                     flexShrink: 0,
-                    height: "200px",
+                    height: "226px",
                     fontSize: "15px",
                     color: COR.textoPrincipal,
                     lineHeight: "26px",
@@ -3293,7 +3293,7 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                         borderRadius: "12px",
                         marginBottom: "18px",
                         minHeight: "136px",
-                        maxHeight: "208px",
+                        maxHeight: "184px",
                         overflowY: "auto", overflowX: "hidden",
                         boxSizing: "border-box",
                       }}
@@ -3386,6 +3386,9 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
             <div style={{ flexShrink: 0, padding: "14px 20px 18px", borderTop: `1px solid ${COR.linha}`, background: COR.fundo, fontFamily: SANS }}>
               {!confirmandoRemocaoResenha ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "10px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
+                    Editar
+                  </button>
                   <button
                     onClick={() => setConfirmandoRemocaoResenha(true)}
                     style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 15px", borderRadius: "20px", border: `1px solid ${COR.alerta}55`, background: "transparent", color: COR.alerta, cursor: "pointer" }}
@@ -3397,9 +3400,6 @@ function TelaResenhas({ estado, livros, pendente, buscaPedida }) {
                     style={{ flexShrink: 0, fontSize: "12.5px", padding: "10px 15px", borderRadius: "20px", border: `1px solid ${COR.linha}`, background: "#FFFFFF", color: COR.textoPrincipal, cursor: "pointer" }}
                   >
                     Voltar
-                  </button>
-                  <button onClick={() => abrirEdicao(resenhaSelecionada)} style={{ flex: 1, fontSize: "13px", fontWeight: 600, padding: "10px", borderRadius: "20px", border: `1.5px solid ${COR.melEscuro}`, background: COR.mel, color: "#FFFFFF", cursor: "pointer", boxShadow: `0 4px 12px ${COR.mel}44` }}>
-                    Editar
                   </button>
                 </div>
               ) : (
