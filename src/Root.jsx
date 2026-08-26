@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import AppLeitura from "./AppLeitura";
 
@@ -80,6 +80,55 @@ function TelaAutenticacao() {
         vv.removeEventListener("resize", fixar);
       }
       campos.forEach((campo) => campo.removeEventListener("focus", aoFocar));
+    };
+  }, []);
+
+  const cartaoRef = useRef(null);
+  const alturaOriginalRef = useRef(null); // posição do cartão sem nenhum deslocamento
+  const [deslocamento, setDeslocamento] = useState(0);
+
+  // Quando o teclado abre, a área visível encolhe. Em vez de deixar o Safari
+  // decidir como reagir (era isso que causava o balanço e o vazio embaixo),
+  // aqui é calculado exatamente quanto do cartão fica escondido atrás do
+  // teclado, e ele desliza pra cima só o necessário pra revelar essa parte —
+  // sem mudar de tamanho. Ao fechar o teclado, volta suavemente ao lugar.
+  useEffect(() => {
+    const vv = window.visualViewport;
+
+    function ajustar() {
+      if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
+      const cartao = cartaoRef.current;
+      if (!cartao) return;
+
+      const r = cartao.getBoundingClientRect();
+      // a base (sem o transform atual) é a posição real menos o quanto já
+      // está deslocado agora
+      if (alturaOriginalRef.current === null) {
+        alturaOriginalRef.current = r.bottom;
+      }
+      const baseFixa = alturaOriginalRef.current;
+      const visivel = vv ? vv.height : window.innerHeight;
+      const excesso = baseFixa - (visivel - 12);
+      const novo = excesso > 0 ? Math.round(excesso) : 0;
+      setDeslocamento((atual) => (atual === novo ? atual : novo));
+    }
+
+    ajustar();
+    if (vv) {
+      vv.addEventListener("resize", ajustar);
+      vv.addEventListener("scroll", ajustar);
+    }
+    window.addEventListener("scroll", ajustar, { passive: true });
+    document.addEventListener("focusin", ajustar);
+    document.addEventListener("focusout", () => setTimeout(ajustar, 60));
+
+    return () => {
+      if (vv) {
+        vv.removeEventListener("resize", ajustar);
+        vv.removeEventListener("scroll", ajustar);
+      }
+      window.removeEventListener("scroll", ajustar);
+      document.removeEventListener("focusin", ajustar);
     };
   }, []);
 
@@ -200,10 +249,13 @@ function TelaAutenticacao() {
       }}
     >
       <div
+        ref={cartaoRef}
         style={{
           width: "100%",
           maxWidth: "380px",
           margin: "auto",
+          transform: deslocamento > 0 ? `translateY(-${deslocamento}px)` : "none",
+          transition: "transform 0.25s ease",
           background: "rgba(255, 253, 248, 0.88)",
           backdropFilter: "blur(20px) saturate(1.08)",
           WebkitBackdropFilter: "blur(20px) saturate(1.08)",
