@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 import AppLeitura from "./AppLeitura";
 
@@ -49,61 +49,39 @@ function TelaAutenticacao() {
   const [focoEmail, setFocoEmail] = useState(false);
   const [focoSenha, setFocoSenha] = useState(false);
 
-  const cartaoRef = useRef(null);
-  const [alturaVisivel, setAlturaVisivel] = useState(null);
-  const [alturaCartao, setAlturaCartao] = useState(0);
-
-  // A página é travada com altura fixa no index.html. No iPhone essa altura
-  // NÃO encolhe quando o teclado abre, então o Safari rola a página travada
-  // pra mostrar o campo — é isso que empurra o cartão pra cima e deixa o
-  // vazio embaixo. Aqui a altura da página acompanha a área realmente
-  // visível, e qualquer rolagem que o Safari tente aplicar é desfeita.
-  // Vale só enquanto a tela de login está aberta: ao sair, tudo volta ao
-  // normal, pra não afetar as abas do app.
+  // Ao tocar num campo, o Safari tenta deslocar a página travada pra
+  // "mostrar" o campo — mesmo ela já estando visível. É isso que fazia a
+  // tela sair do lugar. Aqui esse deslocamento é desfeito repetidamente por
+  // 1,2s após o toque, então a tela fica parada. Nenhuma altura é alterada
+  // e nada mais muda — testado e confirmado antes de aplicar aqui.
   useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const raiz = document.documentElement;
-    const corpo = document.body;
-
-    function ajustar() {
-      const h = vv.height;
-      setAlturaVisivel(h);
-      raiz.style.height = h + "px";
-      corpo.style.height = h + "px";
+    function fixar() {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
-      if (cartaoRef.current) setAlturaCartao(cartaoRef.current.offsetHeight);
     }
-
-    ajustar();
-    const t = setTimeout(ajustar, 350);
-    vv.addEventListener("resize", ajustar);
-    vv.addEventListener("scroll", ajustar);
+    const vv = window.visualViewport;
+    window.addEventListener("scroll", fixar, { passive: true });
+    if (vv) {
+      vv.addEventListener("scroll", fixar);
+      vv.addEventListener("resize", fixar);
+    }
+    const campos = document.querySelectorAll("#tela-login input");
+    function aoFocar() {
+      const ate = Date.now() + 1200;
+      (function repetir() {
+        fixar();
+        if (Date.now() < ate) requestAnimationFrame(repetir);
+      })();
+    }
+    campos.forEach((campo) => campo.addEventListener("focus", aoFocar));
     return () => {
-      clearTimeout(t);
-      vv.removeEventListener("resize", ajustar);
-      vv.removeEventListener("scroll", ajustar);
-      raiz.style.height = "";
-      corpo.style.height = "";
+      window.removeEventListener("scroll", fixar);
+      if (vv) {
+        vv.removeEventListener("scroll", fixar);
+        vv.removeEventListener("resize", fixar);
+      }
+      campos.forEach((campo) => campo.removeEventListener("focus", aoFocar));
     };
   }, []);
-
-  // Com o teclado aberto o espaço encolhe. Em vez de reduzir o cartão inteiro
-  // (o que mudaria a largura e ficaria desproporcional), ele fica compacto:
-  // mesma largura, espaçamentos internos menores e enfeites recolhidos.
-  const compacto = alturaVisivel !== null && alturaVisivel < 560;
-
-  // remede o cartão depois que ele muda de tamanho — inclusive ao ficar
-  // compacto, senão a escala abaixo usaria a altura antiga e encolheria demais
-  useEffect(() => {
-    if (cartaoRef.current) setAlturaCartao(cartaoRef.current.offsetHeight);
-  }, [modo, erro, mensagem, compacto]);
-
-  // ajuste fino de segurança, caso mesmo compacto ainda falte um pouco
-  const escala =
-    alturaVisivel && alturaCartao && alturaCartao > alturaVisivel - 32
-      ? Math.max(0.86, (alturaVisivel - 32) / alturaCartao)
-      : 1;
 
   const estiloInput = (focado) => ({
     width: "100%",
@@ -203,38 +181,35 @@ function TelaAutenticacao() {
 
   return (
     <div
+      id="tela-login"
       style={{
         fontFamily: SERIF,
         background: `
-          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.22) 0%, rgba(224, 158, 148, 0) 60%),
-          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
+          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.58) 0%, rgba(224, 158, 148, 0) 62%),
+          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.48) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
-        minHeight: alturaVisivel ? `${alturaVisivel}px` : "100%",
-        height: alturaVisivel ? `${alturaVisivel}px` : "100%",
+        minHeight: "100%",
+        height: "100%",
         overflow: "hidden",
         overscrollBehavior: "contain",
         color: COR.textoPrincipal,
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "12px 20px",
+        padding: "20px",
         boxSizing: "border-box",
       }}
     >
       <div
-        ref={cartaoRef}
         style={{
           width: "100%",
           maxWidth: "380px",
-          transform: escala < 1 ? `scale(${escala})` : "none",
-          transformOrigin: "center center",
+          margin: "auto",
           background: "rgba(255, 253, 248, 0.88)",
           backdropFilter: "blur(20px) saturate(1.08)",
           WebkitBackdropFilter: "blur(20px) saturate(1.08)",
           border: `1px solid rgba(231, 223, 204, 0.9)`,
           borderRadius: "24px",
-          padding: compacto ? "20px 26px" : "30px 26px",
+          padding: "30px 26px",
           boxShadow: [
             "inset 0 1px 0 rgba(255, 255, 255, 0.95)",
             "inset 0 0 0 1px rgba(255, 255, 255, 0.45)",
@@ -244,7 +219,6 @@ function TelaAutenticacao() {
           ].join(", "),
         }}
       >
-        {!compacto && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50px", height: "50px", borderRadius: "50%", background: `radial-gradient(circle at 35% 30%, #F3ECD9 0%, ${COR.saugeClaro} 75%)`, margin: "0 auto 18px", boxShadow: "0 4px 14px rgba(124, 144, 112, 0.22)" }}>
           <svg viewBox="0 0 48 48" width="26" height="26">
             <circle cx="24" cy="15" r="8.5" fill="#E7A99A" opacity="0.5" />
@@ -259,7 +233,6 @@ function TelaAutenticacao() {
             <path d="M24 18 L24 32.4" stroke={COR.saugeEscuro} strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         </div>
-        )}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontFamily: SANS, fontSize: "10.5px", letterSpacing: "0.16em", textTransform: "uppercase", color: COR.saugeEscuro, textAlign: "center", marginBottom: "6px" }}>
           <span>Leda</span>
           <svg viewBox="0 0 20 20" width="10" height="10" style={{ opacity: 0.75 }}>
@@ -269,19 +242,14 @@ function TelaAutenticacao() {
         <h1 style={{ fontSize: "23px", fontWeight: 700, margin: "0 0 6px", textAlign: "center" }}>
           {titulo}
         </h1>
-        {!compacto && (
-          <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", marginBottom: "18px" }}>
-            {subtitulo}
-          </div>
-        )}
-        {!compacto && (
-          <svg viewBox="0 0 120 14" width="70" height="8" style={{ display: "block", margin: "0 auto 24px" }}>
-            <path d="M2 2 C 30 14, 90 14, 118 2" fill="none" stroke={COR.sauge} strokeWidth="1.3" strokeLinecap="round" opacity="0.55" />
-          </svg>
-        )}
-        {compacto && <div style={{ height: "18px" }} />}
+        <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center", marginBottom: "18px" }}>
+          {subtitulo}
+        </div>
+        <svg viewBox="0 0 120 14" width="70" height="8" style={{ display: "block", margin: "0 auto 24px" }}>
+          <path d="M2 2 C 30 14, 90 14, 118 2" fill="none" stroke={COR.sauge} strokeWidth="1.3" strokeLinecap="round" opacity="0.55" />
+        </svg>
 
-        <form onSubmit={enviar} style={{ display: "flex", flexDirection: "column", gap: compacto ? "11px" : "14px" }}>
+        <form onSubmit={enviar} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           {modo === "criar" && (
             <div>
               <div style={{ fontFamily: SANS, fontSize: "11.5px", color: COR.textoSecundario, marginBottom: "5px" }}>Nome</div>
@@ -376,7 +344,7 @@ function TelaAutenticacao() {
           </button>
         </form>
 
-        <div style={{ height: "1px", background: COR.linha, margin: compacto ? "16px 0 12px" : "22px 0 18px" }} />
+        <div style={{ height: "1px", background: COR.linha, margin: "22px 0 18px" }} />
 
         <div style={{ fontFamily: SANS, fontSize: "12.5px", color: COR.textoSecundario, textAlign: "center" }}>
           {modo === "criar" ? (
