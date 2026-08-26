@@ -49,86 +49,71 @@ function TelaAutenticacao() {
   const [focoEmail, setFocoEmail] = useState(false);
   const [focoSenha, setFocoSenha] = useState(false);
 
-  // Ao tocar num campo, o Safari tenta deslocar a página travada pra
-  // "mostrar" o campo — mesmo ela já estando visível. É isso que fazia a
-  // tela sair do lugar. Aqui esse deslocamento é desfeito repetidamente por
-  // 1,2s após o toque, então a tela fica parada. Nenhuma altura é alterada
-  // e nada mais muda — testado e confirmado antes de aplicar aqui.
-  useEffect(() => {
-    function fixar() {
-      if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
-    }
-    const vv = window.visualViewport;
-    window.addEventListener("scroll", fixar, { passive: true });
-    if (vv) {
-      vv.addEventListener("scroll", fixar);
-      vv.addEventListener("resize", fixar);
-    }
-    const campos = document.querySelectorAll("#tela-login input");
-    function aoFocar() {
-      const ate = Date.now() + 1200;
-      (function repetir() {
-        fixar();
-        if (Date.now() < ate) requestAnimationFrame(repetir);
-      })();
-    }
-    campos.forEach((campo) => campo.addEventListener("focus", aoFocar));
-    return () => {
-      window.removeEventListener("scroll", fixar);
-      if (vv) {
-        vv.removeEventListener("scroll", fixar);
-        vv.removeEventListener("resize", fixar);
-      }
-      campos.forEach((campo) => campo.removeEventListener("focus", aoFocar));
-    };
-  }, []);
-
   const cartaoRef = useRef(null);
   const alturaOriginalRef = useRef(null); // posição do cartão sem nenhum deslocamento
+  const focoAbertoRef = useRef(false); // já tem algum campo focado agora?
   const [deslocamento, setDeslocamento] = useState(0);
 
-  // Quando o teclado abre, a área visível encolhe. Em vez de deixar o Safari
-  // decidir como reagir (era isso que causava o balanço e o vazio embaixo),
-  // aqui é calculado exatamente quanto do cartão fica escondido atrás do
-  // teclado, e ele desliza pra cima só o necessário pra revelar essa parte —
-  // sem mudar de tamanho. Ao fechar o teclado, volta suavemente ao lugar.
+  // Quando o teclado abre, a área visível encolhe. O cartão desliza pra cima
+  // só o necessário pra caber, calculado uma vez ao focar o primeiro campo —
+  // e fica assim enquanto a pessoa move entre e-mail e senha (o iOS mostra
+  // uma barra extra de sugestão de senha nesse campo, que encolhe a área
+  // visível um pouco mais; sem essa trava o cartão subiria de novo ao trocar
+  // de campo). Só recalcula quando o teclado fecha de verdade.
   useEffect(() => {
     const vv = window.visualViewport;
 
-    function ajustar() {
+    function medirEAplicar() {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
       const cartao = cartaoRef.current;
       if (!cartao) return;
-
-      const r = cartao.getBoundingClientRect();
-      // a base (sem o transform atual) é a posição real menos o quanto já
-      // está deslocado agora
       if (alturaOriginalRef.current === null) {
-        alturaOriginalRef.current = r.bottom;
+        alturaOriginalRef.current = cartao.getBoundingClientRect().bottom;
       }
       const baseFixa = alturaOriginalRef.current;
       const visivel = vv ? vv.height : window.innerHeight;
-      const excesso = baseFixa - (visivel - 12);
+      const excesso = baseFixa - (visivel - 4);
       const novo = excesso > 0 ? Math.round(excesso) : 0;
       setDeslocamento((atual) => (atual === novo ? atual : novo));
     }
 
-    ajustar();
-    if (vv) {
-      vv.addEventListener("resize", ajustar);
-      vv.addEventListener("scroll", ajustar);
+    function aoFocar() {
+      if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
+      if (focoAbertoRef.current) return; // já ajustado pro campo anterior — não mexe de novo
+      focoAbertoRef.current = true;
+      // o teclado leva um instante pra abrir; mede de novo logo em seguida
+      medirEAplicar();
+      setTimeout(medirEAplicar, 120);
+      setTimeout(medirEAplicar, 320);
     }
-    window.addEventListener("scroll", ajustar, { passive: true });
-    document.addEventListener("focusin", ajustar);
-    document.addEventListener("focusout", () => setTimeout(ajustar, 60));
+
+    function aoDesfocar() {
+      setTimeout(() => {
+        const ativo = document.activeElement;
+        const aindaEmCampo = ativo && ativo.matches && ativo.matches("#tela-login input");
+        if (!aindaEmCampo) {
+          focoAbertoRef.current = false;
+          setDeslocamento(0);
+        }
+      }, 80);
+    }
+
+    const campos = document.querySelectorAll("#tela-login input");
+    campos.forEach((campo) => {
+      campo.addEventListener("focus", aoFocar);
+      campo.addEventListener("blur", aoDesfocar);
+    });
+    function corrigirRolagem() {
+      if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
+    }
+    window.addEventListener("scroll", corrigirRolagem, { passive: true });
 
     return () => {
-      if (vv) {
-        vv.removeEventListener("resize", ajustar);
-        vv.removeEventListener("scroll", ajustar);
-      }
-      window.removeEventListener("scroll", ajustar);
-      document.removeEventListener("focusin", ajustar);
+      campos.forEach((campo) => {
+        campo.removeEventListener("focus", aoFocar);
+        campo.removeEventListener("blur", aoDesfocar);
+      });
+      window.removeEventListener("scroll", corrigirRolagem);
     };
   }, []);
 
@@ -234,8 +219,8 @@ function TelaAutenticacao() {
       style={{
         fontFamily: SERIF,
         background: `
-          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.58) 0%, rgba(224, 158, 148, 0) 62%),
-          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.48) 0%, rgba(124, 144, 112, 0) 62%),
+          radial-gradient(ellipse 65% 42% at 15% -6%, rgba(224, 158, 148, 0.22) 0%, rgba(224, 158, 148, 0) 60%),
+          radial-gradient(ellipse 60% 46% at 102% 106%, rgba(124, 144, 112, 0.40) 0%, rgba(124, 144, 112, 0) 62%),
           radial-gradient(ellipse 90% 70% at 50% 40%, #FBF6ED 0%, ${COR.fundo} 70%)
         `,
         minHeight: "100%",
