@@ -55,15 +55,16 @@ function TelaAutenticacao() {
   const [deslocamento, setDeslocamento] = useState(0);
 
   // Quando o teclado abre, a área visível encolhe. O cartão desliza pra cima
-  // só o necessário pra caber, calculado uma vez ao focar o primeiro campo —
-  // e fica assim enquanto a pessoa move entre e-mail e senha (o iOS mostra
-  // uma barra extra de sugestão de senha nesse campo, que encolhe a área
-  // visível um pouco mais; sem essa trava o cartão subiria de novo ao trocar
-  // de campo). Só recalcula quando o teclado fecha de verdade.
+  // só o necessário pra caber. Enquanto o teclado estiver aberto, a posição
+  // só pode DESCER (se sobrar mais espaço, como quando a barra de sugestão
+  // de senha some) — nunca sobe mais do que na primeira medida, mesmo que o
+  // iOS encolha um pouco mais a área visível ao trocar de campo. Isso evita
+  // tanto o "subir de novo" ao trocar de campo quanto o vão vazio quando o
+  // espaço volta. Zera e recalcula do zero quando o teclado fecha de verdade.
   useEffect(() => {
     const vv = window.visualViewport;
 
-    function medirEAplicar() {
+    function medir(permiteSubirMais) {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
       const cartao = cartaoRef.current;
       if (!cartao) return;
@@ -74,17 +75,22 @@ function TelaAutenticacao() {
       const visivel = vv ? vv.height : window.innerHeight;
       const excesso = baseFixa - (visivel - 4);
       const novo = excesso > 0 ? Math.round(excesso) : 0;
-      setDeslocamento((atual) => (atual === novo ? atual : novo));
+      setDeslocamento((atual) => {
+        if (atual === novo) return atual;
+        if (permiteSubirMais) return novo;
+        return novo < atual ? novo : atual; // só desce, nunca sobe mais
+      });
     }
 
     function aoFocar() {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
-      if (focoAbertoRef.current) return; // já ajustado pro campo anterior — não mexe de novo
+      const primeiraVez = !focoAbertoRef.current;
       focoAbertoRef.current = true;
-      // o teclado leva um instante pra abrir; mede de novo logo em seguida
-      medirEAplicar();
-      setTimeout(medirEAplicar, 120);
-      setTimeout(medirEAplicar, 320);
+      // na primeira vez que o teclado abre, pode medir livremente (pra
+      // cima ou pra baixo); depois disso só ajusta pra baixo
+      medir(primeiraVez);
+      setTimeout(() => medir(primeiraVez), 120);
+      setTimeout(() => medir(primeiraVez), 320);
     }
 
     function aoDesfocar() {
@@ -98,11 +104,16 @@ function TelaAutenticacao() {
       }, 80);
     }
 
+    function aoRedimensionar() {
+      if (focoAbertoRef.current) medir(false); // só ajusta pra baixo em mudanças espontâneas
+    }
+
     const campos = document.querySelectorAll("#tela-login input");
     campos.forEach((campo) => {
       campo.addEventListener("focus", aoFocar);
       campo.addEventListener("blur", aoDesfocar);
     });
+    if (vv) vv.addEventListener("resize", aoRedimensionar);
     function corrigirRolagem() {
       if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0);
     }
@@ -113,6 +124,7 @@ function TelaAutenticacao() {
         campo.removeEventListener("focus", aoFocar);
         campo.removeEventListener("blur", aoDesfocar);
       });
+      if (vv) vv.removeEventListener("resize", aoRedimensionar);
       window.removeEventListener("scroll", corrigirRolagem);
     };
   }, []);
@@ -229,7 +241,7 @@ function TelaAutenticacao() {
         overscrollBehavior: "contain",
         color: COR.textoPrincipal,
         display: "flex",
-        padding: "20px",
+        padding: "20px 30px",
         boxSizing: "border-box",
       }}
     >
